@@ -58,6 +58,75 @@
   --texture-opacity: 0.035;
 }
 
+[data-palette="grove"] {
+  --bg: light-dark(#edf1e9, #171c19);
+  --surface: light-dark(#f8faf5, #1e2620);
+  --panel: light-dark(#e0e8dc, #111612);
+  --raised: light-dark(#ffffff, #28332b);
+  --hover: light-dark(rgba(32, 60, 35, 0.07), rgba(220, 245, 220, 0.07));
+  --ink: light-dark(#202b23, #e3ebe1);
+  --ink-soft: light-dark(#526657, #a5b4a2);
+  --ink-faint: light-dark(#718374, #899888);
+  --line: light-dark(#cad7c9, #343f35);
+  --accent: light-dark(#9b493e, #e29a7d);
+  --accent-soft: light-dark(rgba(155, 73, 62, 0.11), rgba(226, 154, 125, 0.16));
+  --accent-ink: light-dark(#ffffff, #241814);
+  --spark: light-dark(#a26a12, #e8c66c);
+  --mark: light-dark(#e8e4ae, rgba(232, 198, 108, 0.26));
+  --glow: light-dark(transparent, rgba(161, 197, 138, 0.07));
+  --c-world: light-dark(#3f7454, #91c79a);
+  --c-items: light-dark(#956215, #e6bd63);
+  --c-effects: light-dark(#ad4c45, #eb8f79);
+  --c-conditions: light-dark(#42699a, #91b5e3);
+  --texture-opacity: 0.04;
+}
+
+[data-palette="coast"] {
+  --bg: light-dark(#eaf2f1, #111b1c);
+  --surface: light-dark(#f7fbfa, #192426);
+  --panel: light-dark(#dce9e8, #0d1516);
+  --raised: light-dark(#ffffff, #213133);
+  --hover: light-dark(rgba(20, 65, 68, 0.07), rgba(210, 240, 235, 0.07));
+  --ink: light-dark(#203435, #e0ebea);
+  --ink-soft: light-dark(#526e70, #a2b9b8);
+  --ink-faint: light-dark(#71898a, #8ba3a2);
+  --line: light-dark(#c9d9d8, #304345);
+  --accent: light-dark(#a33f38, #ff9780);
+  --accent-soft: light-dark(rgba(163, 63, 56, 0.1), rgba(255, 151, 128, 0.16));
+  --accent-ink: light-dark(#ffffff, #2a1714);
+  --spark: light-dark(#94600b, #f0c868);
+  --mark: light-dark(#f4e3a8, rgba(240, 200, 104, 0.25));
+  --glow: light-dark(transparent, rgba(111, 190, 177, 0.07));
+  --c-world: light-dark(#267364, #82cabb);
+  --c-items: light-dark(#90600f, #e7bd60);
+  --c-effects: light-dark(#ad453c, #fa9280);
+  --c-conditions: light-dark(#365f98, #92b8e9);
+  --texture-opacity: 0.035;
+}
+
+[data-palette="contrast"] {
+  --bg: light-dark(#ffffff, #101419);
+  --surface: light-dark(#ffffff, #161c22);
+  --panel: light-dark(#eef1f4, #080c10);
+  --raised: light-dark(#ffffff, #1d252e);
+  --hover: light-dark(rgba(17, 24, 39, 0.08), rgba(255, 255, 255, 0.1));
+  --ink: light-dark(#111827, #ffffff);
+  --ink-soft: light-dark(#374151, #e0e6ed);
+  --ink-faint: light-dark(#4b5563, #bdc7d2);
+  --line: light-dark(#737b86, #65717e);
+  --accent: light-dark(#0057b8, #83b9ff);
+  --accent-soft: light-dark(rgba(0, 87, 184, 0.12), rgba(131, 185, 255, 0.2));
+  --accent-ink: light-dark(#ffffff, #101419);
+  --spark: light-dark(#854b00, #ffd166);
+  --mark: light-dark(#ffed9b, rgba(255, 209, 102, 0.32));
+  --glow: light-dark(transparent, rgba(131, 185, 255, 0.08));
+  --c-world: light-dark(#176b3a, #68d391);
+  --c-items: light-dark(#855000, #ffcd70);
+  --c-effects: light-dark(#b42318, #ff8378);
+  --c-conditions: light-dark(#1d4ed8, #8ab4ff);
+  --texture-opacity: 0.02;
+}
+
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);

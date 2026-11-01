@@ -3,6 +3,9 @@ export const THEME_COOKIE = "sw_theme";
 export const PALETTES = {
   paper: { label: "Paper & Ink", blurb: "Cream paper, ink and a ribbon-red accent" },
   storm: { label: "Storm at Dusk", blurb: "Rain-washed slate, lavender and a flash of lightning" },
+  grove: { label: "Moss & Marigold", blurb: "Leaf green, berry and warm gold" },
+  coast: { label: "Coast & Coral", blurb: "Sea-glass teal, coral and sunlit gold" },
+  contrast: { label: "High Contrast", blurb: "Crisp text and strong boundaries" },
 } as const;
 export type Palette = keyof typeof PALETTES;
 
