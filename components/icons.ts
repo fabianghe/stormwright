@@ -1,0 +1,71 @@
+import {
+  BookOpen,
+  CircleCheck,
+  CircleX,
+  Clapperboard,
+  Contrast,
+  Flag,
+  Gem,
+  Gift,
+  Hammer,
+  Hourglass,
+  ListOrdered,
+  MapPin,
+  Move,
+  Music,
+  PackageMinus,
+  PersonStanding,
+  Play,
+  Power,
+  PowerOff,
+  Radio,
+  Scroll,
+  Sparkles,
+  StickyNote,
+  UserRound,
+  Volume2,
+  WandSparkles,
+  Zap,
+  type LucideIcon,
+} from "lucide-react";
+import type { ActionKind, DocKind } from "@/lib/model";
+
+export const KIND_ICONS: Record<DocKind, LucideIcon> = {
+  quest: Scroll,
+  story: BookOpen,
+  character: UserRound,
+  place: MapPin,
+  item: Gem,
+  note: StickyNote,
+};
+
+export const ACTION_ICONS: Record<ActionKind, LucideIcon> = {
+  enable: Power,
+  disable: PowerOff,
+  spawn: Sparkles,
+  move: Move,
+  destroy: Hammer,
+  animate: PersonStanding,
+  flag: Flag,
+  quest_start: Play,
+  stage: ListOrdered,
+  quest_complete: CircleCheck,
+  quest_fail: CircleX,
+  report: Radio,
+  give: Gift,
+  take: PackageMinus,
+  event: Zap,
+  sound: Volume2,
+  music: Music,
+  camera: Clapperboard,
+  fade: Contrast,
+  wait: Hourglass,
+  if_flag: Flag,
+  if_item: Gem,
+  if_quest: Scroll,
+  custom: WandSparkles,
+};
+
+export function actionIcon(kind: string): LucideIcon {
+  return (ACTION_ICONS as Record<string, LucideIcon>)[kind] ?? WandSparkles;
+}

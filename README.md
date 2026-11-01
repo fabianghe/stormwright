@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Stormwright
 
-## Getting Started
+*A quiet place to write your game's story.*
 
-First, run the development server:
+Write quests, dialogue and lore on a typewriter page, and plan what happens in the world as you go: turn things on,
+set story flags, give items, set off explosions, start the next quest. Everything is saved to your account.
+
+- `/` opens the block menu: dialogue, player choices, quest stages, scene headings, notes and 24 kinds of actions
+- `@` mentions a character, place, item or quest, or creates one on the spot
+- ⌘K searches everything · ⌘⇧F is focus mode · ⌘\ hides the sidebar
+- Drag documents in the sidebar to put them in your own order (on a phone: press and hold, then drag)
+- Two palettes (Paper & Ink, Storm at Dusk), each light or dark, plus optional typewriter sounds
+- Version history, trash, a quest map, and export to Markdown, JSON or PDF
+
+## Run it on your computer
+
+You need [Node.js](https://nodejs.org) 20.9 or newer.
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 and create your account. Locally your writing is stored in the `.data/` folder (not
+committed to git).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Put it online for free (Vercel + Neon)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+About 10 minutes, all through the browser:
 
-## Learn More
+1. Push this folder to a GitHub repository.
+2. Go to [vercel.com](https://vercel.com), sign in with GitHub, click **Add New → Project** and import the repository.
+   Leave every setting as it is and click **Deploy**. The first deploy works, but the site can't save anything
+   yet.
+3. In the Vercel project open **Storage → Create Database → Neon** (free plan), create it and connect it to the
+   project. This adds `DATABASE_URL` for you.
+4. Open **Deployments**, click the **…** next to the latest one and choose **Redeploy**. The build sets up the
+   database tables by itself.
+5. Open your site and create your account. You're the only one who can sign up; after the first account,
+   sign-up closes.
 
-To learn more about Next.js, take a look at the following resources:
+Every push to GitHub redeploys automatically.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Optional:** to let other people create accounts, add an environment variable `ALLOW_SIGNUP` = `true` in Vercel
+(Settings → Environment Variables) and redeploy.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Vercel's free plan is meant for personal, non-commercial projects. If Stormwright becomes a business, move to a paid plan.
 
-## Deploy on Vercel
+## Renaming
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The app's name and tagline live in `lib/brand.ts`.
