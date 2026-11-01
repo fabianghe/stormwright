@@ -1,4 +1,9 @@
 export const THEME_COOKIE = "sw_theme";
+export const SOUNDS_COOKIE = "sw_sounds";
+
+export function parseSounds(value: string | undefined) {
+  return value !== "0";
+}
 
 export const PALETTES = {
   paper: { label: "Paper & Ink", blurb: "Cream paper, ink and a ribbon-red accent" },

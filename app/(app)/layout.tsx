@@ -3,9 +3,8 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { listDocuments } from "@/lib/documents";
 import { ACTIVE_PROJECT_COOKIE, listProjects } from "@/lib/projects";
-import { THEME_COOKIE, parseTheme } from "@/lib/theme";
+import { SOUNDS_COOKIE, THEME_COOKIE, parseSounds, parseTheme } from "@/lib/theme";
 import { AppShell } from "@/components/app-shell";
-import { SOUNDS_COOKIE } from "@/components/preferences";
 
 export default async function AppLayout({ children }: LayoutProps<"/">) {
   const user = await getCurrentUser();
@@ -20,7 +19,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
       projects={projects}
       activeProject={activeProject}
       theme={parseTheme(jar.get(THEME_COOKIE)?.value)}
-      sounds={jar.get(SOUNDS_COOKIE)?.value === "1"}
+      sounds={parseSounds(jar.get(SOUNDS_COOKIE)?.value)}
     >
       {children}
     </AppShell>

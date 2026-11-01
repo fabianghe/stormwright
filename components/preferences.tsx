@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { applyTheme, type Theme } from "@/lib/theme";
+import { SOUNDS_COOKIE, applyTheme, type Theme } from "@/lib/theme";
 
 type Preferences = {
   theme: Theme;
@@ -15,7 +15,6 @@ type Preferences = {
 };
 
 const PreferencesContext = createContext<Preferences | null>(null);
-export const SOUNDS_COOKIE = "sw_sounds";
 
 export function PreferencesProvider({
   initialTheme,

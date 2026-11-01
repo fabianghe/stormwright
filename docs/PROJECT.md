@@ -40,6 +40,10 @@ typewriter-style document.
 ## Features in v1
 
 - **Accounts**: username + password, sessions in the database, lockout after 8 wrong attempts.
+- **Sign-in page** doubles as a short tour: what Gameweft is, live-styled examples of each feature (quest tabs,
+  dialogue, choices, mentions, status tracking, actions), a mini quest map, and the palette and sound switch, so
+  visitors can pick a look before signing in. The examples use an original story
+  (Wren and Tomas) on purpose: don't put VIRTUOUS content on this public page.
 - **Sidebar** (Claude-style): New menu, search (⌘K), Home, Quest map, Pinned, sections per kind (Quests, Story,
   Characters, Places, Items, Notes) with drag-to-reorder, Trash, settings (palette, mode, sign out).
 - **Game projects**: each account can create, rename (pencil in the project menu) and switch between separate games; existing documents stay in the
@@ -65,7 +69,8 @@ typewriter-style document.
 - **Quest map**: quests and story documents as cards, arrows from Start/Complete/Fail/Only-if-quest actions;
   drag to arrange (positions saved), "Tidy up" to auto-layout.
 - **Focus mode** (⌘⇧F): hides the chrome, dims everything but the current paragraph, keeps the caret centred.
-- **Typewriter sounds** (optional, synthesised with WebAudio: key clacks and a carriage-return bell).
+- **Typewriter sounds** (on by default, synthesised with WebAudio: key clacks and a carriage-return bell). Switch them
+  off in the settings menu (next to the palettes), in the document header, or on the sign-in page.
 - **Export**: Markdown, structured per-document game JSON, an AI-ready project JSON with all active documents,
   relationships, action vocabulary and architecture-neutral implementation guidance, and Print / Save as PDF.
 - Home page with greeting, quick-create cards, recent documents, totals and keyboard tips.

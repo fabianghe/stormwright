@@ -8,8 +8,6 @@ import {
   Download,
   House,
   LogOut,
-  Monitor,
-  Moon,
   Network,
   PanelLeftClose,
   Pencil,
@@ -18,7 +16,6 @@ import {
   Plus,
   Search,
   Settings,
-  Sun,
   Trash,
 } from "lucide-react";
 import {
@@ -46,15 +43,13 @@ import { APP_NAME } from "@/lib/brand";
 import { api } from "@/lib/client-api";
 import { toAIHandoff } from "@/lib/content";
 import { DOC_KINDS, KIND_INFO, displayTitle, type DocKind, type DocSummary, type FullDoc, type ProjectSummary } from "@/lib/model";
-import { MODES, PALETTES, type Mode, type Palette } from "@/lib/theme";
+import { AppearanceOptions } from "@/components/appearance-options";
 import { KIND_ICONS } from "@/components/icons";
 import { LogoMark } from "@/components/logo";
 import { Menu } from "@/components/menu";
 import { StatusDot } from "@/components/status-dot";
 import { useDocuments } from "@/components/documents-store";
 import { usePreferences } from "@/components/preferences";
-
-const MODE_ICONS: Record<Mode, typeof Sun> = { light: Sun, dark: Moon, system: Monitor };
 
 export function NewDocumentMenu({ align = "left", wide = true }: { align?: "left" | "right"; wide?: boolean }) {
   const store = useDocuments();
@@ -388,8 +383,6 @@ function ProjectSwitcher({
 }
 
 function SettingsMenu({ username }: { username: string }) {
-  const prefs = usePreferences();
-  const { theme, setTheme } = prefs;
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState(false);
 
@@ -430,45 +423,7 @@ function SettingsMenu({ username }: { username: string }) {
     >
       {() => (
         <>
-          <div className="sw-menu-label">Palette</div>
-          {(Object.keys(PALETTES) as Palette[]).map((palette) => (
-            <button
-              key={palette}
-              type="button"
-              className="sw-menu-item"
-              data-active={theme.palette === palette}
-              onClick={() => setTheme({ ...theme, palette })}
-            >
-              <span data-palette={palette} className="flex shrink-0 overflow-hidden rounded-md border border-line">
-                <span className="size-4" style={{ background: "var(--bg)" }} />
-                <span className="size-4" style={{ background: "var(--ink)" }} />
-                <span className="size-4" style={{ background: "var(--accent)" }} />
-              </span>
-              <span className="min-w-0">
-                <span className="block">{PALETTES[palette].label}</span>
-                <span className="block truncate text-xs text-ink-faint">{PALETTES[palette].blurb}</span>
-              </span>
-            </button>
-          ))}
-          <div className="sw-menu-label">Mode</div>
-          <div className="grid grid-cols-3 gap-1 px-1 pb-1">
-            {(Object.keys(MODES) as Mode[]).map((mode) => {
-              const Icon = MODE_ICONS[mode];
-              return (
-                <button
-                  key={mode}
-                  type="button"
-                  onClick={() => setTheme({ ...theme, mode })}
-                  className={`flex flex-col items-center gap-1 rounded-lg border px-1 py-2 text-xs ${
-                    theme.mode === mode ? "border-accent text-accent" : "border-line text-ink-soft hover:bg-hover"
-                  }`}
-                >
-                  <Icon size={15} />
-                  {MODES[mode]}
-                </button>
-              );
-            })}
-          </div>
+          <AppearanceOptions />
           <div className="my-1 border-t border-line" />
           <button
             type="button"
