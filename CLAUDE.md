@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-**Stormwright**: a typewriter-styled web app for writing a game's story, dialogue and quests, including the world
+**Gameweft**: a typewriter-styled web app for writing a game's story, dialogue and quests, including the world
 actions that happen in them. Read `docs/PROJECT.md` first: it holds the vision, the decisions made with the owner
 (Fabi) and the roadmap.
 

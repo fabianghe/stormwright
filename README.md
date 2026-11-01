@@ -1,4 +1,4 @@
-# Stormwright
+# Gameweft
 
 *A quiet place to write your game's story.*
 
@@ -44,7 +44,7 @@ Every push to GitHub redeploys automatically.
 **Optional:** to let other people create accounts, add an environment variable `ALLOW_SIGNUP` = `true` in Vercel
 (Settings → Environment Variables) and redeploy.
 
-Vercel's free plan is meant for personal, non-commercial projects. If Stormwright becomes a business, move to a paid plan.
+Vercel's free plan is meant for personal, non-commercial projects. If Gameweft becomes a business, move to a paid plan.
 
 ## Renaming
 

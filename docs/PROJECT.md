@@ -1,15 +1,15 @@
-# Stormwright: what we're building and why
+# Gameweft: what we're building and why
 
 ## The goal
 
-Stormwright is a calm, beautiful writing app for planning a game's story. It started as a tool for Fabi's own game,
+Gameweft is a calm, beautiful writing app for planning a game's story. It started as a tool for Fabi's own game,
 **VIRTUOUS** ("A youth dreams of a heavy storm"; a third-person stealth/adventure game in Unity, repo at
 `~/Documents/repos/OUTSIDE`), and might grow into a product for other game writers.
 
 The problem it solves: a quest isn't just dialogue. Writing one means describing **what happens next in the world**:
 turn on this GameObject, set that story flag, give an item, trigger an explosion, start the next quest. Ordinary
 writing tools (Docs, Notion) have no words for that, and narrative tools (Twine, Ink, Yarn Spinner, articy) are either
-code-like or not built around world actions. Stormwright treats those actions as first-class blocks inside a
+code-like or not built around world actions. Gameweft treats those actions as first-class blocks inside a
 typewriter-style document.
 
 ### What Fabi asked for (in their words, condensed)
@@ -29,7 +29,7 @@ typewriter-style document.
 
 | Topic | Decision |
 | --- | --- |
-| Name | **Stormwright** (Fabi's pick; "Driftpaper" was the runner-up). The name lives in `lib/brand.ts`, so renaming is one line. |
+| Name | **Gameweft**. The name lives in `lib/brand.ts`. |
 | Hosting | Online and free: **Vercel** (app) + **Neon** (Postgres, free tier). Locally it runs with zero setup on an embedded database. |
 | Users | Single user for now; the first account is created on first visit, then sign-up closes (`ALLOW_SIGNUP=true` reopens it). |
 | Writing model | **Free writing + inserted blocks** (not a rigid form): dialogue lines, player choices, quest stages, scene headings, notes, and **action blocks**. |

@@ -6,16 +6,16 @@ import * as schema from "./schema";
 
 export type Database = NeonHttpDatabase<typeof schema>;
 
-const globalStore = globalThis as unknown as { __stormwrightDb?: Promise<Database> };
+const globalStore = globalThis as unknown as { __gameweftDb?: Promise<Database> };
 
 export function getDb(): Promise<Database> {
-  if (!globalStore.__stormwrightDb) {
-    globalStore.__stormwrightDb = connect().catch((error) => {
-      globalStore.__stormwrightDb = undefined;
+  if (!globalStore.__gameweftDb) {
+    globalStore.__gameweftDb = connect().catch((error) => {
+      globalStore.__gameweftDb = undefined;
       throw error;
     });
   }
-  return globalStore.__stormwrightDb;
+  return globalStore.__gameweftDb;
 }
 
 async function connect(): Promise<Database> {
