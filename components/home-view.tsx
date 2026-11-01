@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
 import { DOC_KINDS, KIND_INFO, STATUS_INFO, displayTitle } from "@/lib/model";
 import { timeAgo } from "@/lib/time";
 import { KIND_ICONS } from "@/components/icons";
@@ -9,7 +8,7 @@ import { StatusDot } from "@/components/status-dot";
 import { useDocuments } from "@/components/documents-store";
 
 const TIPS = [
-  ["/", "opens the block menu: dialogue, choices, stages, and 24 kinds of actions."],
+  ["/", "opens the block menu: dialogue, choices, stages, notes and game actions."],
   ["@", "mentions a character, place, item or quest, or creates one on the spot."],
   ["Enter", "inside a dialogue line starts the next line and alternates speakers."],
   ["Tab", "in a dialogue line jumps to the speaker's name."],
@@ -17,22 +16,8 @@ const TIPS = [
   ["⌘⇧F", "is focus mode. Esc brings everything back."],
 ];
 
-const noSubscription = () => () => {};
-
-function greeting(hour: number) {
-  if (hour < 5) return "Still up";
-  if (hour < 12) return "Good morning";
-  if (hour < 18) return "Good afternoon";
-  return "Good evening";
-}
-
-export function HomeView({ username }: { username: string }) {
+export function HomeView({ greeting }: { greeting: string }) {
   const store = useDocuments();
-  const hello = useSyncExternalStore(
-    noSubscription,
-    () => greeting(new Date().getHours()),
-    () => "Hello",
-  );
 
   const recent = [...store.docs].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 6);
   const totals = store.docs.reduce(
@@ -45,9 +30,7 @@ export function HomeView({ username }: { username: string }) {
     <div className="h-full overflow-y-auto">
       <div className="mx-auto max-w-5xl px-6 pb-24 pt-16 sm:px-10">
         <h1 className="sw-fade-in font-display text-4xl sm:text-5xl">
-          <span className="sw-caret">
-            {hello}, {username}.
-          </span>
+          <span className="sw-caret">{greeting}</span>
         </h1>
         <p className="sw-fade-in mt-3 text-ink-soft [animation-delay:120ms]">What happens next in your story?</p>
 
