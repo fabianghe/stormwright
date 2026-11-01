@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { getDocument } from "@/lib/documents";
 import { displayTitle } from "@/lib/model";
+import { getActiveProject } from "@/lib/projects";
 import { DocumentView } from "@/components/document-view";
 import { TrashedNotice } from "@/components/trashed-notice";
 
@@ -12,7 +13,8 @@ async function load(params: Props["params"]) {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
   const { id } = await params;
-  return getDocument(user.id, id);
+  const project = await getActiveProject(user.id);
+  return getDocument(user.id, project.id, id);
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

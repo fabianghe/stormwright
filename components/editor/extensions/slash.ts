@@ -18,7 +18,6 @@ import {
   Quote,
   type LucideIcon,
 } from "lucide-react";
-import { ACTION_GROUPS, ACTION_KINDS, type ActionKind } from "@/lib/model";
 import { actionIcon } from "@/components/icons";
 import { popupRenderer, type SuggestionItem } from "../suggestion-list";
 import { insertBlockAt } from "./helpers";
@@ -64,18 +63,15 @@ const COMMANDS: Command[] = [
   cmd("todo", "To-do list", "Things to build", ListChecks, WRITING, "task check checkbox", (e, r) => e.chain().focus().deleteRange(r).toggleTaskList().run()),
   cmd("quote", "Quote", "Epigraph or lore excerpt", Quote, WRITING, "blockquote", (e, r) => e.chain().focus().deleteRange(r).toggleBlockquote().run()),
   cmd("divider", "Divider", "* * *", Minus, WRITING, "hr rule separator break", (e, r) => e.chain().focus().deleteRange(r).setHorizontalRule().run()),
-  ...(Object.keys(ACTION_KINDS) as ActionKind[]).map((kind) => {
-    const info = ACTION_KINDS[kind];
-    return cmd(
-      `action-${kind}`,
-      info.label,
-      `Action · ${info.target}`,
-      actionIcon(kind),
-      `Actions · ${ACTION_GROUPS[info.group]}`,
-      `action ${kind.replace("_", " ")} ${info.group} ${info.target}`,
-      block({ type: "action", attrs: { kind } }, true),
-    );
-  }),
+  cmd(
+    "game-action",
+    "Game action",
+    "Describe what happens in your game",
+    actionIcon("custom"),
+    "Actions",
+    "action event mechanic behavior custom",
+    block({ type: "action", attrs: { kind: "custom" } }, true),
+  ),
 ];
 
 export function filterCommands(query: string) {

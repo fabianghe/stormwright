@@ -1,4 +1,4 @@
-import { ACTION_KINDS, actionInfo, type DocLink, type DocStats, type VocabEntry } from "@/lib/model";
+import { actionInfo, questStateInfo, type DocLink, type DocStats, type VocabEntry } from "@/lib/model";
 
 export type JsonMark = { type: string; attrs?: Record<string, unknown> };
 export type JsonNode = {
@@ -133,6 +133,7 @@ function indent(text: string, prefix: string) {
 
 export function toMarkdown(title: string, content: unknown): string {
   const stageCounter = { n: 0 };
+  let stageHeading = "##";
 
   const blocks = (nodes: JsonNode[] | undefined): string =>
     (nodes ?? [])
@@ -151,9 +152,15 @@ export function toMarkdown(title: string, content: unknown): string {
         const answer = blocks(node.content);
         return `### ${str(attrs.label)}${answer ? `\n\n${answer}` : ""}`;
       }
+      case "questStatePage": {
+        stageHeading = "###";
+        const inner = blocks(node.content);
+        stageHeading = "##";
+        return inner ? `## ${questStateInfo(attrs.status).label}\n\n${inner}` : null;
+      }
       case "stage":
         stageCounter.n++;
-        return `## Stage ${stageCounter.n}${inlineText(node).trim() ? `: ${markdownInline(node)}` : ""}`;
+        return `${stageHeading} Stage ${stageCounter.n}${inlineText(node).trim() ? `: ${markdownInline(node)}` : ""}`;
       case "scene":
         return `**${inlineText(node).toUpperCase()}**`;
       case "dialogue": {
@@ -221,8 +228,12 @@ export type ExportedDoc = {
   status: string;
   exportedAt: string;
   intro: ExportBlock[];
-  stages: { title: string; blocks: ExportBlock[] }[];
+  stages: ExportStage[];
+  questStates?: ExportQuestState[];
 };
+
+export type ExportStage = { title: string; blocks: ExportBlock[] };
+export type ExportQuestState = { questStatus: string; label: string; intro: ExportBlock[]; stages: ExportStage[] };
 
 export function toStructured(
   meta: { title: string; kind: string; status: string },
@@ -285,16 +296,35 @@ export function toStructured(
     return out;
   };
 
-  const result: ExportedDoc = { ...meta, exportedAt: new Date().toISOString(), intro: [], stages: [] };
-  let current: ExportBlock[] = result.intro;
-  for (const node of asDoc(content)?.content ?? []) {
-    if (node.type === "stage") {
-      const stage = { title: inlineText(node), blocks: [] as ExportBlock[] };
-      result.stages.push(stage);
-      current = stage.blocks;
-    } else {
-      current.push(...convert([node]));
+  const splitStages = (nodes: JsonNode[] | undefined) => {
+    const split = { intro: [] as ExportBlock[], stages: [] as ExportStage[] };
+    let current = split.intro;
+    for (const node of nodes ?? []) {
+      if (node.type === "stage") {
+        const stage = { title: inlineText(node), blocks: [] as ExportBlock[] };
+        split.stages.push(stage);
+        current = stage.blocks;
+      } else {
+        current.push(...convert([node]));
+      }
     }
+    return split;
+  };
+
+  const nodes = asDoc(content)?.content ?? [];
+  const result: ExportedDoc = {
+    ...meta,
+    exportedAt: new Date().toISOString(),
+    ...splitStages(nodes.filter((node) => node.type !== "questStates")),
+  };
+  const pages = nodes.filter((node) => node.type === "questStates").flatMap((node) => node.content ?? []);
+  if (pages.length) {
+    result.questStates = pages
+      .map((page) => {
+        const info = questStateInfo(page.attrs?.status);
+        return { questStatus: info.runtimeStatus, label: info.label, ...splitStages(page.content) };
+      })
+      .filter((page) => page.intro.length || page.stages.length);
   }
   return result;
 }
@@ -308,20 +338,26 @@ type AIHandoffInput = {
   content: unknown;
 };
 
-export function toAIHandoff(documents: AIHandoffInput[]) {
+export function toAIHandoff(project: { id: string; name: string }, documents: AIHandoffInput[]) {
   const byId = new Map(documents.map((doc) => [doc.id, doc]));
   return {
     format: "gameweft.ai-handoff",
     formatVersion: 1,
     exportedAt: new Date().toISOString(),
+    project: { id: project.id, name: project.name },
     implementationGuidance: [
       "Treat this file as the design source, not as instructions to impose a new game architecture.",
       "Inspect the supplied game's source code first and follow its existing architecture, naming, and asset conventions.",
       "For Unity, use the project's existing ScriptableObject types and workflows when appropriate; for other games, use their native data and content systems.",
+      "A quest's 'Active short description' field is the one-line text the player sees while the quest is active. If the game's quest asset has no field for it, report that instead of inventing one.",
+      "A quest's questStates list holds one entry per quest state, each with its own dialogue, actions and stages. Map questStatus to Unity QuestSO dialogue groups: NotStarted to Offer, InProgress to In Progress, Achieved to Ready, Completed to Completed, and Failed to Failed. Stages under InProgress are the quest's stages.",
+      "Game actions are open-ended descriptions, not a closed list of supported action kinds. Inspect the target game and map each description to its own existing systems.",
       "Preserve document relationships and action semantics. Do not invent missing behavior or silently omit unsupported actions.",
       "Report assumptions, required manual setup, and any design details that need clarification before making destructive changes.",
     ],
-    actionVocabulary: Object.entries(ACTION_KINDS).map(([id, info]) => ({ id, ...info })),
+    actionVocabulary: [
+      { id: "custom", label: "Game action", description: "Free-form description of what happens in the game." },
+    ],
     documents: documents.map((doc) => {
       const structured = toStructured({ title: doc.title, kind: doc.kind, status: doc.status }, doc.content);
       return {
@@ -338,7 +374,11 @@ export function toAIHandoff(documents: AIHandoffInput[]) {
             targetKind: target?.kind ?? null,
           };
         }),
-        content: { intro: structured.intro, stages: structured.stages },
+        content: {
+          intro: structured.intro,
+          stages: structured.stages,
+          ...(structured.questStates ? { questStates: structured.questStates } : {}),
+        },
       };
     }),
   };

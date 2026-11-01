@@ -5,11 +5,13 @@
 Write quests, dialogue and lore on a typewriter page, and plan what happens in the world as you go: turn things on,
 set story flags, give items, set off explosions, start the next quest. Everything is saved to your account.
 
-- `/` opens the block menu: dialogue, player choices, quest stages, scene headings, notes and 24 kinds of actions
+- `/` opens the block menu: dialogue, quest state markers, player choices, quest stages, notes and a free-form Game action
 - `@` mentions a character, place, item or quest, or creates one on the spot
+- Create separate game projects and switch between their documents from the sidebar
+- Add `/Quest state` above dialogue or actions; its state applies until the next marker or stage. Default clears it.
 - ⌘K searches everything · ⌘⇧F is focus mode · ⌘\ hides the sidebar
 - Drag documents in the sidebar to put them in your own order (on a phone: press and hold, then drag)
-- Five palettes, including a high-contrast option, each light or dark, plus optional typewriter sounds
+- Six palettes, each light or dark, plus optional typewriter sounds
 - Version history, trash, a quest map, and exports to Markdown, game JSON, AI-ready project JSON or PDF.
 
 ## Run it on your computer

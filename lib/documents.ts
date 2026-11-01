@@ -45,10 +45,10 @@ function toSummary(row: SummaryRow): DocSummary {
   };
 }
 
-const owned = (userId: string, id: string) =>
-  and(eq(schema.documents.id, id), eq(schema.documents.userId, userId));
+const owned = (userId: string, projectId: string, id: string) =>
+  and(eq(schema.documents.id, id), eq(schema.documents.userId, userId), eq(schema.documents.projectId, projectId));
 
-export async function listDocuments(userId: string, trash = false): Promise<DocSummary[]> {
+export async function listDocuments(userId: string, projectId: string, trash = false): Promise<DocSummary[]> {
   const db = await getDb();
   const rows = await db
     .select(summaryColumns)
@@ -56,6 +56,7 @@ export async function listDocuments(userId: string, trash = false): Promise<DocS
     .where(
       and(
         eq(schema.documents.userId, userId),
+        eq(schema.documents.projectId, projectId),
         trash ? isNotNull(schema.documents.deletedAt) : isNull(schema.documents.deletedAt),
       ),
     )
@@ -63,7 +64,7 @@ export async function listDocuments(userId: string, trash = false): Promise<DocS
   return rows.map(toSummary);
 }
 
-export async function listFullDocuments(userId: string): Promise<FullDoc[]> {
+export async function listFullDocuments(userId: string, projectId: string): Promise<FullDoc[]> {
   const db = await getDb();
   const rows = await db
     .select({
@@ -73,7 +74,7 @@ export async function listFullDocuments(userId: string): Promise<FullDoc[]> {
       deletedAt: schema.documents.deletedAt,
     })
     .from(schema.documents)
-    .where(and(eq(schema.documents.userId, userId), isNull(schema.documents.deletedAt)))
+    .where(and(eq(schema.documents.userId, userId), eq(schema.documents.projectId, projectId), isNull(schema.documents.deletedAt)))
     .orderBy(asc(schema.documents.position), desc(schema.documents.updatedAt));
   return rows.map((row) => ({
     ...toSummary(row),
@@ -83,7 +84,7 @@ export async function listFullDocuments(userId: string): Promise<FullDoc[]> {
   }));
 }
 
-export async function getDocument(userId: string, id: string): Promise<FullDoc | null> {
+export async function getDocument(userId: string, projectId: string, id: string): Promise<FullDoc | null> {
   const db = await getDb();
   const [row] = await db
     .select({
@@ -93,7 +94,7 @@ export async function getDocument(userId: string, id: string): Promise<FullDoc |
       deletedAt: schema.documents.deletedAt,
     })
     .from(schema.documents)
-    .where(owned(userId, id))
+    .where(owned(userId, projectId, id))
     .limit(1);
   if (!row) return null;
   return {
@@ -104,7 +105,7 @@ export async function getDocument(userId: string, id: string): Promise<FullDoc |
   };
 }
 
-export async function createDocument(userId: string, kind: DocKind, title = ""): Promise<DocSummary> {
+export async function createDocument(userId: string, projectId: string, kind: DocKind, title = ""): Promise<DocSummary> {
   const db = await getDb();
   const content = templateFor(kind);
   const meta = extractMeta(title, content);
@@ -117,6 +118,7 @@ export async function createDocument(userId: string, kind: DocKind, title = ""):
     .values({
       id: crypto.randomUUID(),
       userId,
+      projectId,
       kind,
       position: (top?.value ?? 1) - 1,
       title,
@@ -142,12 +144,12 @@ export type DocumentPatch = {
   snapshotBefore?: boolean;
 };
 
-export async function updateDocument(userId: string, id: string, patch: DocumentPatch): Promise<DocSummary | null> {
+export async function updateDocument(userId: string, projectId: string, id: string, patch: DocumentPatch): Promise<DocSummary | null> {
   const db = await getDb();
   const [current] = await db
     .select({ title: schema.documents.title, content: schema.documents.content })
     .from(schema.documents)
-    .where(owned(userId, id))
+    .where(owned(userId, projectId, id))
     .limit(1);
   if (!current) return null;
 
@@ -179,7 +181,7 @@ export async function updateDocument(userId: string, id: string, patch: Document
     await insertVersion(id, current.title, current.content);
   }
 
-  const [row] = await db.update(schema.documents).set(values).where(owned(userId, id)).returning(summaryColumns);
+  const [row] = await db.update(schema.documents).set(values).where(owned(userId, projectId, id)).returning(summaryColumns);
 
   if (patch.content !== undefined) {
     await maybeSnapshot(id, row.title, patch.content, patch.snapshotBefore === true);
@@ -209,36 +211,36 @@ async function maybeSnapshot(documentId: string, title: string, content: unknown
   }
 }
 
-export async function setDeleted(userId: string, id: string, deleted: boolean) {
+export async function setDeleted(userId: string, projectId: string, id: string, deleted: boolean) {
   const db = await getDb();
   const rows = await db
     .update(schema.documents)
     .set({ deletedAt: deleted ? new Date() : null, pinned: deleted ? false : undefined })
-    .where(owned(userId, id))
+    .where(owned(userId, projectId, id))
     .returning(summaryColumns);
   return rows[0] ? toSummary(rows[0]) : null;
 }
 
-export async function deleteForever(userId: string, id: string) {
+export async function deleteForever(userId: string, projectId: string, id: string) {
   const db = await getDb();
   const rows = await db
     .delete(schema.documents)
-    .where(and(owned(userId, id), isNotNull(schema.documents.deletedAt)))
+    .where(and(owned(userId, projectId, id), isNotNull(schema.documents.deletedAt)))
     .returning({ id: schema.documents.id });
   return rows.length > 0;
 }
 
-export async function listVersions(userId: string, id: string) {
+export async function listVersions(userId: string, projectId: string, id: string) {
   const db = await getDb();
   return db
     .select({ id: schema.documentVersions.id, title: schema.documentVersions.title, createdAt: schema.documentVersions.createdAt })
     .from(schema.documentVersions)
     .innerJoin(schema.documents, eq(schema.documents.id, schema.documentVersions.documentId))
-    .where(owned(userId, id))
+    .where(owned(userId, projectId, id))
     .orderBy(desc(schema.documentVersions.createdAt));
 }
 
-export async function getVersion(userId: string, id: string, versionId: string) {
+export async function getVersion(userId: string, projectId: string, id: string, versionId: string) {
   const db = await getDb();
   const [row] = await db
     .select({
@@ -249,17 +251,17 @@ export async function getVersion(userId: string, id: string, versionId: string) 
     })
     .from(schema.documentVersions)
     .innerJoin(schema.documents, eq(schema.documents.id, schema.documentVersions.documentId))
-    .where(and(owned(userId, id), eq(schema.documentVersions.id, versionId)))
+    .where(and(owned(userId, projectId, id), eq(schema.documentVersions.id, versionId)))
     .limit(1);
   return row ?? null;
 }
 
-export async function collectVocab(userId: string): Promise<VocabEntry[]> {
+export async function collectVocab(userId: string, projectId: string): Promise<VocabEntry[]> {
   const db = await getDb();
   const rows = await db
     .select({ vocab: schema.documents.vocab })
     .from(schema.documents)
-    .where(and(eq(schema.documents.userId, userId), isNull(schema.documents.deletedAt)));
+    .where(and(eq(schema.documents.userId, userId), eq(schema.documents.projectId, projectId), isNull(schema.documents.deletedAt)));
   const merged = new Map<string, VocabEntry>();
   for (const row of rows) {
     for (const entry of row.vocab) merged.set(`${entry.kind}:${entry.text.toLowerCase()}`, entry);
@@ -267,7 +269,7 @@ export async function collectVocab(userId: string): Promise<VocabEntry[]> {
   return [...merged.values()].sort((a, b) => a.text.localeCompare(b.text));
 }
 
-export async function searchDocuments(userId: string, query: string) {
+export async function searchDocuments(userId: string, projectId: string, query: string) {
   const db = await getDb();
   const pattern = `%${query.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
   const rows = await db
@@ -276,6 +278,7 @@ export async function searchDocuments(userId: string, query: string) {
     .where(
       and(
         eq(schema.documents.userId, userId),
+        eq(schema.documents.projectId, projectId),
         isNull(schema.documents.deletedAt),
         ilike(schema.documents.searchText, pattern),
       ),

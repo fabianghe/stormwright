@@ -1,7 +1,10 @@
 "use client";
 
 import {
+  Check,
   ChevronRight,
+  ChevronDown,
+  Folder,
   Download,
   House,
   LogOut,
@@ -36,12 +39,12 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useRef, useState, type MutableRefObject } from "react";
 import { APP_NAME } from "@/lib/brand";
 import { api } from "@/lib/client-api";
 import { toAIHandoff } from "@/lib/content";
-import { DOC_KINDS, KIND_INFO, displayTitle, type DocKind, type DocSummary, type FullDoc } from "@/lib/model";
+import { DOC_KINDS, KIND_INFO, displayTitle, type DocKind, type DocSummary, type FullDoc, type ProjectSummary } from "@/lib/model";
 import { MODES, PALETTES, type Mode, type Palette } from "@/lib/theme";
 import { KIND_ICONS } from "@/components/icons";
 import { LogoMark } from "@/components/logo";
@@ -185,6 +188,7 @@ function Section({
       </button>
       {open && (
         <DndContext
+          id={`sidebar-${title}`}
           sensors={sensors}
           collisionDetection={closestCenter}
           onDragStart={() => (justDragged.current = true)}
@@ -204,6 +208,115 @@ function Section({
   );
 }
 
+function ProjectSwitcher({
+  projects,
+  activeProject,
+  pathname,
+}: {
+  projects: ProjectSummary[];
+  activeProject: ProjectSummary;
+  pathname: string;
+}) {
+  const router = useRouter();
+  const [name, setName] = useState("");
+  const [working, setWorking] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const navigateToProject = () => {
+    if (pathname === "/") router.refresh();
+    else router.replace("/");
+  };
+
+  const switchProject = async (projectId: string, close: () => void) => {
+    if (projectId === activeProject.id) {
+      close();
+      return;
+    }
+    setWorking(true);
+    setError(null);
+    try {
+      await api(`/api/projects/${projectId}/select`, { method: "POST", body: {} });
+      close();
+      navigateToProject();
+    } catch {
+      setError("Couldn't switch projects. Try again.");
+    } finally {
+      setWorking(false);
+    }
+  };
+
+  const createProject = async (event: React.FormEvent<HTMLFormElement>, close: () => void) => {
+    event.preventDefault();
+    const projectName = name.trim();
+    if (!projectName) return;
+    setWorking(true);
+    setError(null);
+    try {
+      await api("/api/projects", { body: { name: projectName } });
+      close();
+      navigateToProject();
+    } catch {
+      setError("Couldn't create this project. Try another name.");
+    } finally {
+      setWorking(false);
+    }
+  };
+
+  return (
+    <Menu
+      className="w-72"
+      trigger={({ toggle }) => (
+        <button
+          type="button"
+          onClick={toggle}
+          className="flex w-full items-center gap-2 rounded-lg border border-line bg-surface px-2.5 py-2 text-left text-sm hover:bg-hover"
+          title="Switch or create game project"
+        >
+          <Folder size={15} className="shrink-0 text-accent" />
+          <span className="min-w-0 flex-1 truncate">{activeProject.name}</span>
+          <ChevronDown size={14} className="shrink-0 text-ink-faint" />
+        </button>
+      )}
+    >
+      {(close) => (
+        <>
+          <div className="sw-menu-label">Game projects</div>
+          {projects.map((project) => (
+            <button
+              key={project.id}
+              type="button"
+              className="sw-menu-item"
+              data-active={project.id === activeProject.id}
+              disabled={working}
+              onClick={() => void switchProject(project.id, close)}
+            >
+              <Folder size={15} className="text-ink-faint" />
+              <span className="min-w-0 flex-1 truncate">{project.name}</span>
+              {project.id === activeProject.id && <Check size={14} className="text-accent" />}
+            </button>
+          ))}
+          <div className="my-1 border-t border-line" />
+          <form className="space-y-2 p-2" onSubmit={(event) => void createProject(event, close)}>
+            <label className="block text-xs text-ink-soft" htmlFor="new-game-project">New project</label>
+            <input
+              id="new-game-project"
+              className="sw-input w-full"
+              value={name}
+              maxLength={80}
+              placeholder="Game name"
+              onChange={(event) => setName(event.target.value)}
+            />
+            <button type="submit" className="sw-btn sw-btn-primary w-full justify-center" disabled={working || !name.trim()}>
+              <Plus size={15} /> {working ? "Working…" : "Create and switch"}
+            </button>
+          </form>
+          {error && <p className="px-2.5 pb-2 text-xs text-(--c-effects)">{error}</p>}
+        </>
+      )}
+    </Menu>
+  );
+}
+
 function SettingsMenu({ username }: { username: string }) {
   const prefs = usePreferences();
   const { theme, setTheme } = prefs;
@@ -214,9 +327,9 @@ function SettingsMenu({ username }: { username: string }) {
     setExporting(true);
     setExportError(false);
     try {
-      const { documents } = await api<{ documents: FullDoc[] }>("/api/documents/export");
+      const { project, documents } = await api<{ project: ProjectSummary; documents: FullDoc[] }>("/api/documents/export");
       const url = URL.createObjectURL(
-        new Blob([JSON.stringify(toAIHandoff(documents), null, 2)], { type: "application/json" }),
+        new Blob([JSON.stringify(toAIHandoff(project, documents), null, 2)], { type: "application/json" }),
       );
       const anchor = document.createElement("a");
       anchor.href = url;
@@ -313,7 +426,17 @@ function SettingsMenu({ username }: { username: string }) {
   );
 }
 
-export function Sidebar({ username, onOpenSearch }: { username: string; onOpenSearch: () => void }) {
+export function Sidebar({
+  username,
+  projects,
+  activeProject,
+  onOpenSearch,
+}: {
+  username: string;
+  projects: ProjectSummary[];
+  activeProject: ProjectSummary;
+  onOpenSearch: () => void;
+}) {
   const pathname = usePathname();
   const store = useDocuments();
   const prefs = usePreferences();
@@ -355,6 +478,7 @@ export function Sidebar({ username, onOpenSearch }: { username: string; onOpenSe
       </div>
 
       <div className="space-y-2 px-3">
+        <ProjectSwitcher projects={projects} activeProject={activeProject} pathname={pathname} />
         <NewDocumentMenu />
         <button
           type="button"

@@ -33,7 +33,7 @@ typewriter-style document.
 | Hosting | Online and free: **Vercel** (app) + **Neon** (Postgres, free tier). Locally it runs with zero setup on an embedded database. |
 | Users | Single user for now; the first account is created on first visit, then sign-up closes (`ALLOW_SIGNUP=true` reopens it). |
 | Writing model | **Free writing + inserted blocks** (not a rigid form): dialogue lines, player choices, quest stages, scene headings, notes, and **action blocks**. |
-| Look | Two palettes, each with light and dark: **Paper & Ink** (cream paper, ink, ribbon-red; dark = charcoal with amber lamp glow) and **Storm at Dusk** (rain-washed slate, lavender; dark = midnight slate with violet and a lightning-yellow spark). Plus "match device". |
+| Look | Six palettes, each with light and dark. The originals: **Paper & Ink** (cream paper, ink, ribbon-red; dark = charcoal with amber lamp glow) and **Storm at Dusk** (rain-washed slate, lavender; dark = midnight slate with violet and a lightning-yellow spark), made first by Claude. Later added: **Ember & Ash**, **Moonlit Pine**, **Terracotta & Sand** and **Aurora**. Plus "match device". |
 | Fonts | Courier Prime (body, clean typewriter) + Special Elite (headings, worn typewriter), both free Google Fonts. |
 | Ordering | Manual order per sidebar section via drag and drop (dnd-kit): mouse drag after 6 px, touch press-and-hold 250 ms, keyboard Space + arrows. New documents go to the top of their section. |
 
@@ -42,19 +42,22 @@ typewriter-style document.
 - **Accounts**: username + password, sessions in the database, lockout after 8 wrong attempts.
 - **Sidebar** (Claude-style): New menu, search (⌘K), Home, Quest map, Pinned, sections per kind (Quests, Story,
   Characters, Places, Items, Notes) with drag-to-reorder, Trash, settings (palette, mode, sign out).
-- **Document kinds** with starter templates: quest, story, character, place, item, note. Status per document:
+- **Game projects**: each account can create and switch between separate games; existing documents stay in the
+  original project.
+- **Document kinds** with starter templates: quest (including an Active short description), story, character, place, item, note. Status per document:
   To do → In progress → Ready to implement → Done. On the quest map, Done means implemented in the game.
 - **Editor** (type `/` for blocks, `@` to mention):
   - **Dialogue**: speaker (autocompletes characters and previously used names), delivery note, line. Enter starts the
     next line and alternates speakers; Enter on an empty line leaves dialogue; Tab jumps to the speaker.
+  - **Quest state tabs**: below the title and the Active short description, a quest is one tab per state (Offer,
+    In progress, Ready, Completed, Failed), mirroring the dialogue tabs on Unity's `QuestSO`. Each tab is a full page
+    with that state's dialogue and actions; stages live in In progress. Nothing can be written outside the tabs.
+    Older quests are sorted into the tabs automatically when opened.
   - **Player choice**: an option label with its own nested branch of content; "+ option" adds a sibling.
   - **Quest stage**: auto-numbered ("Stage 1, 2…"), shown in the outline and the map card.
   - **Scene heading** (screenplay style), **note to self**, headings, lists, to-dos, quotes, dividers.
-  - **Actions**, 24 kinds in groups: World (Turn ON/OFF, Spawn, Move, Break, Play animation), Story (Set story flag,
-    Start/Complete/Fail quest, Go to stage, Report event), Items (Give/Take), Effects (Event/VFX, Sound, Music,
-    Camera/cutscene, Fade, Wait), Conditions (Only if flag/item/quest), and a free-form "Something happens".
-    Targets autocomplete from names already used anywhere (the app learns your GameObjects, flags and items), and
-    quest/item targets can link to the actual document.
+  - **Game action**: one free-form action description for any game-specific mechanic. Existing structured action
+    blocks remain readable, while new actions are mapped to the target game's own architecture during implementation.
   - **Mentions** (`@`) link characters, places, items and quests, and can create a new one on the spot. Links are
     kept up to date when something is renamed, and each document shows "Mentioned in" backlinks.
 - **Autosave** (debounced, retries when offline), **version history** (snapshot at most every 10 minutes, 60 kept,
@@ -73,7 +76,7 @@ typewriter-style document.
   `RemoveItemAction` with `ItemSO`, Start/Complete quest → `SetQuestStatusAction`/`TurnInQuestAction`,
   Report event → `QuestEvents.Report(QuestVerb, GameTag)`, Turn ON/OFF → `QuestActivator`, dialogue lines →
   `DialogueSO` with `LocalizedText`. (See `OUTSIDE/CLAUDE.md` → "Dialogue & quests".)
-- Projects/workspaces (several games per account), sharing and collaborators, comments.
+- Sharing and collaborators, comments.
 - Images and mood boards in documents (needs file storage, e.g. Vercel Blob).
 - Dialogue tree view for choices; a version diff view; tags and folders; per-project vocab management.
 - Email or OAuth login and password reset, if it becomes a product. **Note:** Vercel's free Hobby plan is for

@@ -17,6 +17,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@electric-sql/pglite": "^0.5.14",
     "@neondatabase/serverless": "^1.2.0",
+    "@tiptap/extension-document": "^3.32.2",
     "@tiptap/extension-highlight": "^3.32.2",
     "@tiptap/extension-list": "^3.32.2",
     "@tiptap/extension-mention": "^3.32.2",

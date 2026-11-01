@@ -20,6 +20,47 @@ export const STATUS_INFO: Record<DocStatus, { label: string }> = {
   built: { label: "Done" },
 };
 
+export const QUEST_STATES = [
+  {
+    state: "not_started",
+    tab: "Offer",
+    label: "Offer · Not started",
+    runtimeStatus: "NotStarted",
+    hint: "Plays while the quest isn't started. Finishing it starts the quest.",
+  },
+  {
+    state: "in_progress",
+    tab: "In progress",
+    label: "In progress",
+    runtimeStatus: "InProgress",
+    hint: "The quest's stages, and what plays while they aren't done yet.",
+  },
+  {
+    state: "achieved",
+    tab: "Ready",
+    label: "Ready · Achieved",
+    runtimeStatus: "Achieved",
+    hint: "Plays when every objective is done. Finishing it turns the quest in.",
+  },
+  {
+    state: "completed",
+    tab: "Completed",
+    label: "Completed",
+    runtimeStatus: "Completed",
+    hint: "Plays after the quest is turned in.",
+  },
+  { state: "failed", tab: "Failed", label: "Failed", runtimeStatus: "Failed", hint: "Plays after the quest has failed." },
+] as const;
+export type QuestState = (typeof QUEST_STATES)[number]["state"];
+
+export function isQuestState(value: unknown): value is QuestState {
+  return QUEST_STATES.some((info) => info.state === value);
+}
+
+export function questStateInfo(value: unknown) {
+  return QUEST_STATES.find((info) => info.state === value) ?? QUEST_STATES[0];
+}
+
 export type ActionGroup = "world" | "story" | "items" | "effects" | "conditions" | "other";
 
 export const ACTION_GROUPS: Record<ActionGroup, string> = {
@@ -66,7 +107,7 @@ export const ACTION_KINDS = {
   if_flag: { label: "Only if flag", group: "conditions", target: "Flag", value: "Is" },
   if_item: { label: "Only if has item", group: "conditions", target: "Item", value: "Amount", refKinds: ["item"], link: "mentions" },
   if_quest: { label: "Only if quest", group: "conditions", target: "Quest", value: "Is (done, active…)", refKinds: ["quest"], link: "requires" },
-  custom: { label: "Something happens", group: "other", target: "Describe it" },
+  custom: { label: "Game action", group: "other", target: "Describe what happens in the game" },
 } satisfies Record<string, ActionKindInfo>;
 
 export type ActionKind = keyof typeof ACTION_KINDS;
@@ -78,6 +119,8 @@ export function actionInfo(kind: string): ActionKindInfo {
 export type DocLink = { to: string; type: LinkType };
 export type VocabEntry = { kind: string; text: string };
 export type DocStats = { words: number; stages: number; lines: number; actions: number };
+
+export type ProjectSummary = { id: string; name: string; position: number; createdAt: string };
 
 export type DocSummary = {
   id: string;

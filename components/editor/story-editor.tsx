@@ -3,6 +3,7 @@
 import { EditorContent, useEditor, type Editor } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
 import StarterKit from "@tiptap/starter-kit";
+import Document from "@tiptap/extension-document";
 import Highlight from "@tiptap/extension-highlight";
 import { TaskItem, TaskList } from "@tiptap/extension-list";
 import { CharacterCount, Focus, Placeholder } from "@tiptap/extensions";
@@ -12,7 +13,7 @@ import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { api } from "@/lib/client-api";
 import { displayTitle, type DocKind, type DocSummary, type VocabEntry } from "@/lib/model";
 import { extractMeta } from "@/lib/content";
-import { upgradeSectionFields } from "@/lib/templates";
+import { prepareContent } from "@/lib/templates";
 import { playKey, playReturn } from "@/lib/typewriter-sound";
 import { useDocuments } from "@/components/documents-store";
 import { usePreferences } from "@/components/preferences";
@@ -21,6 +22,7 @@ import { Action } from "./extensions/action";
 import { Field, Note, Scene, Stage } from "./extensions/blocks";
 import { Choice } from "./extensions/choice";
 import { Dialogue } from "./extensions/dialogue";
+import { QuestStatePage, QuestStates } from "./extensions/quest-state";
 import { createMention, setMentionSource } from "./extensions/mention";
 import { SlashCommand } from "./extensions/slash";
 
@@ -69,7 +71,7 @@ export function StoryEditor({ content, kind, scrollRef, onChange, onReady }: Pro
   const store = useDocuments();
   const prefs = usePreferences();
   const [vocab, setVocab] = useState<VocabEntry[]>([]);
-  const upgraded = useMemo(() => upgradeSectionFields(kind, content), [kind, content]);
+  const prepared = useMemo(() => prepareContent(kind, content), [kind, content]);
 
   const live = useRef({ store, router, prefs, onChange, onReady });
   useEffect(() => {
@@ -85,17 +87,34 @@ export function StoryEditor({ content, kind, scrollRef, onChange, onReady }: Pro
   const extensions = useMemo(
     () => [
       StarterKit.configure({
+        document: false,
+        trailingNode: { notAfter: ["paragraph", "questStates"] },
         heading: { levels: [1, 2, 3] },
         codeBlock: false,
         link: { openOnClick: false, autolink: true },
         dropcursor: { color: "var(--accent)", width: 2 },
       }),
+      Document.extend({ content: "(block | questStates)+" }),
       Highlight,
       TaskList,
       TaskItem.configure({ nested: true }),
       Placeholder.configure({
         includeChildren: true,
-        placeholder: ({ node }) => placeholderFor(node.type.name, node.attrs.level),
+        showOnlyCurrent: false,
+        placeholder: ({ editor: e, node, pos, hasAnchor }) => {
+          if (node.type.name === "paragraph") {
+            const parent = e.state.doc.resolve(pos).parent;
+            if (parent.childCount === 1 && parent.type.name === "questStatePage") {
+              return "Dialogue and actions for this state. Press / for blocks…";
+            }
+            if (parent.childCount === 1 && parent.type.name === "field") {
+              return String(parent.attrs.label).toLowerCase() === "active short description"
+                ? "What the player sees while the quest is active…"
+                : "Write here…";
+            }
+          }
+          return hasAnchor ? placeholderFor(node.type.name, node.attrs.level) : "";
+        },
       }),
       CharacterCount,
       Focus.configure({ mode: "shallowest" }),
@@ -104,6 +123,8 @@ export function StoryEditor({ content, kind, scrollRef, onChange, onReady }: Pro
       Scene,
       Note,
       Dialogue,
+      QuestStates,
+      QuestStatePage,
       Choice,
       Action,
       SlashCommand,
@@ -114,7 +135,7 @@ export function StoryEditor({ content, kind, scrollRef, onChange, onReady }: Pro
 
   const editor = useEditor({
     extensions,
-    content: upgraded.content as object,
+    content: prepared.content as object,
     immediatelyRender: false,
     editorProps: {
       attributes: { spellcheck: "true", class: "sw-prose" },
@@ -148,7 +169,7 @@ export function StoryEditor({ content, kind, scrollRef, onChange, onReady }: Pro
       }
       syncReferences(editor, live.current.store.docsById);
       live.current.onReady(editor);
-      if (upgraded.changed) live.current.onChange();
+      if (prepared.changed) live.current.onChange();
     },
     onUpdate: () => live.current.onChange(),
   });

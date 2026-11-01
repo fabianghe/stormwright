@@ -1,6 +1,7 @@
 import { deleteForever, getDocument, setDeleted, updateDocument, type DocumentPatch } from "@/lib/documents";
 import { checkMutation, fail, readJson, requireUser } from "@/lib/api";
 import { isDocKind, isDocStatus } from "@/lib/model";
+import { getActiveProject } from "@/lib/projects";
 
 type Context = { params: Promise<{ id: string }> };
 
@@ -9,7 +10,8 @@ const MAX_CONTENT_BYTES = 4 * 1024 * 1024;
 export async function GET(_request: Request, { params }: Context) {
   const user = await requireUser();
   if (user instanceof Response) return user;
-  const doc = await getDocument(user.id, (await params).id);
+  const project = await getActiveProject(user.id);
+  const doc = await getDocument(user.id, project.id, (await params).id);
   return doc ? Response.json({ document: doc }) : fail("Not found", 404);
 }
 
@@ -22,6 +24,7 @@ export async function PATCH(request: Request, { params }: Context) {
   if (body instanceof Response) return body;
   const user = await requireUser();
   if (user instanceof Response) return user;
+  const project = await getActiveProject(user.id);
 
   const patch: DocumentPatch = {};
   if (typeof body.title === "string") patch.title = body.title.slice(0, 300);
@@ -39,7 +42,7 @@ export async function PATCH(request: Request, { params }: Context) {
     patch.content = content;
   }
 
-  const doc = await updateDocument(user.id, (await params).id, patch);
+  const doc = await updateDocument(user.id, project.id, (await params).id, patch);
   return doc ? Response.json({ document: doc }) : fail("Not found", 404);
 }
 
@@ -48,11 +51,12 @@ export async function DELETE(request: Request, { params }: Context) {
   if (blocked) return blocked;
   const user = await requireUser();
   if (user instanceof Response) return user;
+  const project = await getActiveProject(user.id);
 
   const id = (await params).id;
   if (new URL(request.url).searchParams.get("forever") === "1") {
-    return (await deleteForever(user.id, id)) ? Response.json({ ok: true }) : fail("Not found", 404);
+    return (await deleteForever(user.id, project.id, id)) ? Response.json({ ok: true }) : fail("Not found", 404);
   }
-  const doc = await setDeleted(user.id, id, true);
+  const doc = await setDeleted(user.id, project.id, id, true);
   return doc ? Response.json({ document: doc }) : fail("Not found", 404);
 }

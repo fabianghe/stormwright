@@ -2,14 +2,14 @@
 
 import { PanelLeft } from "lucide-react";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
-import type { DocSummary } from "@/lib/model";
+import type { DocSummary, ProjectSummary } from "@/lib/model";
 import type { Theme } from "@/lib/theme";
 import { CommandPalette } from "@/components/command-palette";
 import { DocumentsProvider } from "@/components/documents-store";
 import { PreferencesProvider, usePreferences } from "@/components/preferences";
 import { Sidebar } from "@/components/sidebar";
 
-function Frame({ username, children }: { username: string; children: ReactNode }) {
+function Frame({ username, projects, activeProject, children }: { username: string; projects: ProjectSummary[]; activeProject: ProjectSummary; children: ReactNode }) {
   const prefs = usePreferences();
   const [searchOpen, setSearchOpen] = useState(false);
   const closeSearch = useCallback(() => setSearchOpen(false), []);
@@ -45,7 +45,12 @@ function Frame({ username, children }: { username: string; children: ReactNode }
               : "-translate-x-full md:-ml-72 md:translate-x-0"
         }`}
       >
-        <Sidebar username={username} onOpenSearch={() => setSearchOpen(true)} />
+        <Sidebar
+          username={username}
+          projects={projects}
+          activeProject={activeProject}
+          onOpenSearch={() => setSearchOpen(true)}
+        />
       </div>
       {open === true && (
         <button
@@ -76,20 +81,26 @@ function Frame({ username, children }: { username: string; children: ReactNode }
 export function AppShell({
   username,
   documents,
+  projects,
+  activeProject,
   theme,
   sounds,
   children,
 }: {
   username: string;
   documents: DocSummary[];
+  projects: ProjectSummary[];
+  activeProject: ProjectSummary;
   theme: Theme;
   sounds: boolean;
   children: ReactNode;
 }) {
   return (
     <PreferencesProvider initialTheme={theme} initialSounds={sounds}>
-      <DocumentsProvider initial={documents}>
-        <Frame username={username}>{children}</Frame>
+      <DocumentsProvider key={activeProject.id} initial={documents}>
+        <Frame username={username} projects={projects} activeProject={activeProject}>
+          {children}
+        </Frame>
       </DocumentsProvider>
     </PreferencesProvider>
   );

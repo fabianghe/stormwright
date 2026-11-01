@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { api } from "@/lib/client-api";
 import { toMarkdown, toStructured } from "@/lib/content";
+import { prepareContent } from "@/lib/templates";
 import {
   DOC_KINDS,
   DOC_STATUSES,
@@ -174,10 +175,12 @@ export function DocumentView({ doc }: { doc: FullDoc }) {
     selector: ({ editor: e }) => {
       if (!e) return { items: [] as { pos: number; type: string; text: string; level: number }[], words: 0 };
       const items: { pos: number; type: string; text: string; level: number }[] = [];
-      e.state.doc.forEach((node, pos) => {
+      e.state.doc.descendants((node, pos) => {
+        if (node.type.name === "questStates" || node.type.name === "questStatePage") return true;
         if (node.type.name === "stage" || node.type.name === "heading" || node.type.name === "scene") {
           items.push({ pos, type: node.type.name, text: node.textContent, level: Number(node.attrs.level ?? 2) });
         }
+        return false;
       });
       return { items, words: e.storage.characterCount.words() };
     },
@@ -186,12 +189,13 @@ export function DocumentView({ doc }: { doc: FullDoc }) {
 
   const restore = async (version: { title: string; content: unknown }) => {
     await flush();
+    const content = prepareContent(summary.kind, version.content).content;
     const { document } = await api<{ document: DocSummary }>(`/api/documents/${doc.id}`, {
       method: "PATCH",
-      body: { title: version.title, content: version.content, snapshotBefore: true },
+      body: { title: version.title, content, snapshotBefore: true },
     });
     store.upsert(document);
-    editorRef.current?.commands.setContent(version.content as object, { emitUpdate: false });
+    editorRef.current?.commands.setContent(content as object, { emitUpdate: false });
     setTitle(version.title);
     setSaveState("saved");
     setHistoryOpen(false);

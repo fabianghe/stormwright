@@ -12,6 +12,20 @@ export const users = pgTable("users", {
   createdAt: createdAt(),
 });
 
+export const projects = pgTable(
+  "projects",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    position: doublePrecision("position").default(0).notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [index("projects_user_idx").on(t.userId, t.position)],
+);
+
 export const sessions = pgTable(
   "sessions",
   {
@@ -31,6 +45,9 @@ export const documents = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
+    projectId: text("project_id")
+      .notNull()
+      .references(() => projects.id, { onDelete: "cascade" }),
     title: text("title").default("").notNull(),
     kind: text("kind").default("note").notNull(),
     status: text("status").default("idea").notNull(),
@@ -47,7 +64,10 @@ export const documents = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
   },
-  (t) => [index("documents_user_idx").on(t.userId, t.updatedAt)],
+  (t) => [
+    index("documents_user_idx").on(t.userId, t.updatedAt),
+    index("documents_project_idx").on(t.projectId, t.updatedAt),
+  ],
 );
 
 export const documentVersions = pgTable(

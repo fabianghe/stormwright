@@ -27,7 +27,7 @@ export const Field = Node.create({
   renderHTML({ HTMLAttributes, node }) {
     return [
       "section",
-      mergeAttributes(HTMLAttributes, { "data-type": "field", class: "sw-field" }),
+      mergeAttributes(HTMLAttributes, { "data-type": "field", "data-label": node.attrs.label, class: "sw-field" }),
       ["div", { class: "sw-field-label", contenteditable: "false" }, node.attrs.label],
       ["div", { class: "sw-field-content" }, 0],
     ];
