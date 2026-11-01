@@ -1,11 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "@/lib/client-api";
 import { playKey, playReturn } from "@/lib/typewriter-sound";
 import { usePreferences } from "@/components/preferences";
 
-export function AuthForm({ firstRun, canSignUp }: { firstRun: boolean; canSignUp: boolean }) {
+function TypedHeading({ text }: { text: string }) {
+  const [shown, setShown] = useState(0);
+
+  useEffect(() => {
+    const step = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? text.length : 1;
+    let count = 0;
+    let timer = 0;
+    const tick = () => {
+      count = Math.min(text.length, count + step);
+      setShown(count);
+      if (count < text.length) timer = window.setTimeout(tick, 45 + Math.random() * 50);
+    };
+    timer = window.setTimeout(tick, 550);
+    return () => window.clearTimeout(timer);
+  }, [text]);
+
+  return (
+    <h2 className="relative font-display text-2xl leading-snug" aria-label={text}>
+      <span aria-hidden className="invisible">{text}▍</span>
+      <span aria-hidden className="absolute inset-0">
+        <span className={shown < text.length ? "sw-caret" : undefined}>{text.slice(0, shown)}</span>
+      </span>
+    </h2>
+  );
+}
+
+export function AuthForm({ firstRun, canSignUp, greeting }: { firstRun: boolean; canSignUp: boolean; greeting: string }) {
   const [mode, setMode] = useState<"login" | "signup">(firstRun ? "signup" : "login");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -34,9 +60,9 @@ export function AuthForm({ firstRun, canSignUp }: { firstRun: boolean; canSignUp
   };
 
   return (
-    <div className="sw-fade-in w-full [animation-delay:80ms]">
-      <form onSubmit={submit} onKeyDown={typewriter} className="sw-page space-y-4 rounded-2xl px-7 py-8">
-        <h2 className="font-display text-2xl">{mode === "signup" ? "Create your account" : "Welcome back"}</h2>
+    <div className="w-full">
+      <form onSubmit={submit} onKeyDown={typewriter} className="sw-page sw-login-card space-y-4 rounded-2xl px-7 py-8">
+        <TypedHeading key={mode} text={mode === "signup" ? "Create your account" : greeting} />
         {firstRun && (
           <p className="rounded-lg bg-accent-soft px-3 py-2 text-sm leading-relaxed text-ink-soft">
             Welcome. This is a fresh install: create the first account, it&apos;s yours.

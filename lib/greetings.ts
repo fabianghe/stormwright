@@ -20,7 +20,7 @@ export const GREETINGS = [
   "Achievement unlocked: showing up, {name}.",
 ];
 
-export function randomGreeting(name: string) {
+export function randomGreeting(name?: string) {
   const greeting = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
-  return greeting.replace("{name}", name);
+  return name ? greeting.replace("{name}", name) : greeting.replace(/,? \{name\}/, "");
 }

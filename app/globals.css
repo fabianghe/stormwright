@@ -366,6 +366,70 @@ body::before {
     0 0 120px var(--glow);
 }
 
+.sw-after-form {
+  animation: sw-fade-in 0.6s ease-out 0.55s both;
+}
+.sw-after-form-late {
+  animation: sw-fade-in 0.7s ease-out 0.8s both;
+}
+.sw-login-card {
+  --login-base: 0 0 0 1px var(--line), 0 30px 60px -40px rgba(0, 0, 0, 0.35);
+  --login-glow: color-mix(in srgb, var(--accent) 24%, transparent);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--login-base), 0 0 46px -14px var(--login-glow);
+  animation:
+    sw-paper-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both,
+    sw-breathe 2.8s ease-in-out 1.1s 3;
+}
+.sw-login-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: var(--accent);
+  transform-origin: left;
+  animation: sw-ink-line 0.9s cubic-bezier(0.6, 0, 0.2, 1) 0.45s both;
+}
+@keyframes sw-paper-in {
+  from {
+    opacity: 0;
+    transform: translateY(28px) rotate(-0.6deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes sw-ink-line {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes sw-breathe {
+  0%,
+  100% {
+    box-shadow: var(--login-base), 0 0 46px -14px var(--login-glow);
+  }
+  50% {
+    box-shadow:
+      var(--login-base),
+      0 0 0 4px var(--accent-soft),
+      0 0 80px -8px color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sw-login-card,
+  .sw-login-card::before,
+  .sw-after-form,
+  .sw-after-form-late {
+    animation: none;
+  }
+}
+
 .sw-editor .ProseMirror {
   outline: none;
   font-size: 1.05rem;

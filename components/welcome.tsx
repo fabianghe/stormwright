@@ -94,11 +94,11 @@ export function WelcomeIntro({ className = "" }: { className?: string }) {
 export function WelcomeFeatures({ className = "" }: { className?: string }) {
   return (
     <div className={`sw-fade-in [animation-delay:150ms] ${className}`}>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
         <Feature
           icon={PanelsTopLeft}
           title="Write dialogue like a script"
-          className="sm:col-span-2"
+          className="sm:col-span-2 lg:col-span-1 xl:col-span-2"
           caption="Offer, In progress, Ready, Completed and Failed each get their own tab, so you write exactly what plays when. Dialogue reads like a script: speakers autocomplete from your characters, and Enter starts the next line."
         >
           <div className="sw-quest-tablist">
@@ -154,10 +154,10 @@ export function WelcomeFeatures({ className = "" }: { className?: string }) {
         <Feature
           icon={ListChecks}
           title="Track progress like a task board"
-          className="sm:col-span-2"
+          className="sm:col-span-2 lg:col-span-1 xl:col-span-2"
           caption="Every page moves from To do to In progress, Ready to implement and Done. Statuses show in the sidebar, and quests marked Done turn green on the quest map, so you always know what's left to build."
         >
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start lg:flex-col lg:items-stretch xl:flex-row xl:items-start">
             <ul className="min-w-0 flex-1 space-y-1">
               {BOARD.map(({ title, status }) => (
                 <li key={title} className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm">
@@ -169,7 +169,7 @@ export function WelcomeFeatures({ className = "" }: { className?: string }) {
                 </li>
               ))}
             </ul>
-            <div className="sw-menu w-full shrink-0 sm:w-52">
+            <div className="sw-menu w-full shrink-0 sm:w-52 lg:w-full xl:w-52">
               <div className="sw-menu-label">Status</div>
               {DOC_STATUSES.map((status) => (
                 <div key={status} className="sw-menu-item cursor-default" data-active={status === "draft"}>
@@ -180,40 +180,42 @@ export function WelcomeFeatures({ className = "" }: { className?: string }) {
             </div>
           </div>
         </Feature>
+        <WelcomeMap />
+        <WelcomeActions />
       </div>
     </div>
   );
 }
 
 const MAP_CARDS: { kind: DocKind; status: DocStatus; title: string; meta: string; x: number; y: number }[] = [
-  { kind: "quest", status: "built", title: "The Ferryman's Debt", meta: "2 stages · 8 lines", x: 6, y: 14 },
-  { kind: "quest", status: "draft", title: "Across the Marsh", meta: "1 stage · 3 lines", x: 150, y: 118 },
-  { kind: "story", status: "idea", title: "Fog Night", meta: "12 lines", x: 6, y: 222 },
+  { kind: "quest", status: "built", title: "The Ferryman's Debt", meta: "2 stages · 8 lines", x: 2, y: 14 },
+  { kind: "quest", status: "draft", title: "Across the Marsh", meta: "1 stage · 3 lines", x: 50, y: 118 },
+  { kind: "story", status: "idea", title: "Fog Night", meta: "12 lines", x: 2, y: 222 },
 ];
 
 export function WelcomeMap({ className = "" }: { className?: string }) {
   return (
-    <section className={`sw-fade-in rounded-2xl border border-line bg-surface p-5 [animation-delay:150ms] ${className}`}>
+    <section className={`flex min-w-0 flex-col rounded-2xl border border-line bg-surface p-5 ${className}`}>
       <h3 className="flex items-center gap-2 font-display text-lg">
         <Network size={17} className="shrink-0 text-accent" /> See the whole story at once
       </h3>
       <div
-        className="relative mx-auto mt-4 h-[19.5rem] w-[300px] max-w-full overflow-hidden rounded-xl bg-raised ring-1 ring-line"
+        className="relative mt-4 h-[19.5rem] w-full overflow-hidden rounded-xl bg-raised ring-1 ring-line"
         style={{ backgroundImage: "radial-gradient(var(--line) 1px, transparent 1px)", backgroundSize: "16px 16px" }}
       >
-        <svg className="absolute inset-0 size-full text-ink-faint" viewBox="0 0 300 312" fill="none" aria-hidden>
-          <path d="M154 52 C 224 52, 224 60, 224 118" stroke="currentColor" strokeWidth="1.3" strokeDasharray="5 5" />
-          <path d="M224 194 C 224 260, 216 260, 154 260" stroke="currentColor" strokeWidth="1.3" strokeDasharray="5 5" />
+        <svg className="absolute inset-0 size-full text-ink-faint" viewBox="0 0 300 312" preserveAspectRatio="none" fill="none" aria-hidden>
+          <path d="M150 52 C 222 52, 222 60, 222 118" stroke="currentColor" strokeWidth="1.3" strokeDasharray="5 5" vectorEffect="non-scaling-stroke" />
+          <path d="M222 194 C 222 260, 214 260, 150 260" stroke="currentColor" strokeWidth="1.3" strokeDasharray="5 5" vectorEffect="non-scaling-stroke" />
         </svg>
         {MAP_CARDS.map(({ kind, status, title, meta, x, y }) => {
           const Icon = KIND_ICONS[kind];
           return (
             <div
               key={title}
-              className={`sw-quest-node absolute w-[9.25rem] rounded-xl border border-line bg-surface px-3 py-2 shadow-sm ${
+              className={`sw-quest-node absolute w-[48%] rounded-xl border border-line bg-surface px-3 py-2 shadow-sm ${
                 status === "built" ? "is-done" : ""
               }`}
-              style={{ left: x, top: y }}
+              style={{ left: `${x}%`, top: y }}
             >
               <div className="flex items-center gap-1.5 text-[0.62rem] text-ink-faint">
                 <Icon size={11} />
