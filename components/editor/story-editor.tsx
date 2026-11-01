@@ -133,6 +133,11 @@ export function StoryEditor({ content, scrollRef, onChange, onReady }: Props) {
       },
     },
     onCreate: ({ editor }) => {
+      const heading = editor.state.doc.firstChild;
+      const paragraph = editor.state.doc.childCount > 1 ? editor.state.doc.child(1) : null;
+      if (heading?.type.name === "heading" && paragraph?.type.name === "paragraph" && paragraph.content.size === 0) {
+        editor.commands.setTextSelection(heading.nodeSize + 1);
+      }
       syncReferences(editor, live.current.store.docsById);
       live.current.onReady(editor);
     },

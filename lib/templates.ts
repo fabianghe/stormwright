@@ -7,7 +7,7 @@ const h = (text: string, level = 2): JsonNode => ({
   attrs: { level },
   content: [{ type: "text", text }],
 });
-const sections = (...titles: string[]) => titles.flatMap((title) => [h(title), p()]);
+const sections = (...titles: string[]) => titles.flatMap((title) => [h(title, 3), p()]);
 
 export function templateFor(kind: DocKind): JsonNode {
   switch (kind) {
