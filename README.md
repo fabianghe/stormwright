@@ -11,7 +11,7 @@ set story flags, give items, set off explosions, start the next quest. Everythin
 - Add `/Quest state` above dialogue or actions; its state applies until the next marker or stage. Default clears it.
 - ⌘K searches everything · ⌘⇧F is focus mode · ⌘\ hides the sidebar
 - Drag documents in the sidebar to put them in your own order (on a phone: press and hold, then drag)
-- Six palettes, each light or dark, plus optional typewriter sounds
+- Seven palettes, each light or dark, plus optional typewriter sounds
 - Version history, trash, a quest map, and exports to Markdown, game JSON, AI-ready project JSON or PDF.
 
 ## Run it on your computer

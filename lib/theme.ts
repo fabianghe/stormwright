@@ -7,6 +7,7 @@ export const PALETTES = {
   pine: { label: "Moonlit Pine", blurb: "Misty sage, pine ink and cold moonlight" },
   sand: { label: "Terracotta & Sand", blurb: "Warm sand, umber and terracotta clay" },
   aurora: { label: "Aurora", blurb: "Frost, deep navy and a green aurora glow" },
+  script: { label: "Screenplay", blurb: "White paper and black type, inverted at night" },
 } as const;
 export type Palette = keyof typeof PALETTES;
 
