@@ -42,7 +42,7 @@ typewriter-style document.
 - **Accounts**: username + password, sessions in the database, lockout after 8 wrong attempts.
 - **Sidebar** (Claude-style): New menu, search (⌘K), Home, Quest map, Pinned, sections per kind (Quests, Story,
   Characters, Places, Items, Notes) with drag-to-reorder, Trash, settings (palette, mode, sign out).
-- **Game projects**: each account can create and switch between separate games; existing documents stay in the
+- **Game projects**: each account can create, rename (pencil in the project menu) and switch between separate games; existing documents stay in the
   original project.
 - **Document kinds** with starter templates: quest (including an Active short description), story, character, place, item, note. Status per document:
   To do → In progress → Ready to implement → Done. On the quest map, Done means implemented in the game.

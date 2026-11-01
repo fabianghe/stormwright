@@ -12,6 +12,7 @@ import {
   Moon,
   Network,
   PanelLeftClose,
+  Pencil,
   Pin,
   PinOff,
   Plus,
@@ -221,6 +222,37 @@ function ProjectSwitcher({
   const [name, setName] = useState("");
   const [working, setWorking] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [draft, setDraft] = useState("");
+  const renaming = useRef<string | null>(null);
+
+  const startRename = (project: ProjectSummary) => {
+    renaming.current = project.id;
+    setRenamingId(project.id);
+    setDraft(project.name);
+    setError(null);
+  };
+
+  const cancelRename = () => {
+    renaming.current = null;
+    setRenamingId(null);
+  };
+
+  const saveRename = async (project: ProjectSummary) => {
+    if (renaming.current !== project.id) return;
+    cancelRename();
+    const projectName = draft.trim();
+    if (!projectName || projectName === project.name) return;
+    setWorking(true);
+    try {
+      await api(`/api/projects/${project.id}`, { method: "PATCH", body: { name: projectName } });
+      router.refresh();
+    } catch {
+      setError("Couldn't rename this project. Try again.");
+    } finally {
+      setWorking(false);
+    }
+  };
 
   const navigateToProject = () => {
     if (pathname === "/") router.refresh();
@@ -281,20 +313,58 @@ function ProjectSwitcher({
       {(close) => (
         <>
           <div className="sw-menu-label">Game projects</div>
-          {projects.map((project) => (
-            <button
-              key={project.id}
-              type="button"
-              className="sw-menu-item"
-              data-active={project.id === activeProject.id}
-              disabled={working}
-              onClick={() => void switchProject(project.id, close)}
-            >
-              <Folder size={15} className="text-ink-faint" />
-              <span className="min-w-0 flex-1 truncate">{project.name}</span>
-              {project.id === activeProject.id && <Check size={14} className="text-accent" />}
-            </button>
-          ))}
+          {projects.map((project) =>
+            renamingId === project.id ? (
+              <form
+                key={project.id}
+                className="px-1 py-0.5"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  void saveRename(project);
+                }}
+              >
+                <input
+                  autoFocus
+                  className="sw-input !py-1.5 text-sm"
+                  value={draft}
+                  maxLength={80}
+                  aria-label="Project name"
+                  onFocus={(event) => event.currentTarget.select()}
+                  onChange={(event) => setDraft(event.target.value)}
+                  onBlur={() => void saveRename(project)}
+                  onKeyDown={(event) => {
+                    if (event.key !== "Escape") return;
+                    event.nativeEvent.stopImmediatePropagation();
+                    cancelRename();
+                  }}
+                />
+              </form>
+            ) : (
+              <div key={project.id} className="group flex items-center">
+                <button
+                  type="button"
+                  className="sw-menu-item min-w-0 flex-1"
+                  data-active={project.id === activeProject.id}
+                  disabled={working}
+                  onClick={() => void switchProject(project.id, close)}
+                >
+                  <Folder size={15} className="text-ink-faint" />
+                  <span className="min-w-0 flex-1 truncate">{project.name}</span>
+                  {project.id === activeProject.id && <Check size={14} className="text-accent" />}
+                </button>
+                <button
+                  type="button"
+                  className="ml-1 grid size-7 shrink-0 place-items-center rounded-md text-ink-faint hover:bg-hover hover:text-ink focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100"
+                  aria-label={`Rename ${project.name}`}
+                  title="Rename"
+                  disabled={working}
+                  onClick={() => startRename(project)}
+                >
+                  <Pencil size={13} />
+                </button>
+              </div>
+            ),
+          )}
           <div className="my-1 border-t border-line" />
           <form className="space-y-2 p-2" onSubmit={(event) => void createProject(event, close)}>
             <label className="block text-xs text-ink-soft" htmlFor="new-game-project">New project</label>

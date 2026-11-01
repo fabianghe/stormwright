@@ -67,3 +67,12 @@ export async function selectProject(userId: string, projectId: string): Promise<
   });
   return toProject(row);
 }
+export async function renameProject(userId: string, projectId: string, name: string): Promise<ProjectSummary | null> {
+  const db = await getDb();
+  const [row] = await db
+    .update(schema.projects)
+    .set({ name })
+    .where(and(eq(schema.projects.id, projectId), eq(schema.projects.userId, userId)))
+    .returning();
+  return row ? toProject(row) : null;
+}
