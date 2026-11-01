@@ -14,11 +14,12 @@ import {
   type NodeProps,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { LayoutGrid, Network } from "lucide-react";
+import { Check, ChevronDown, LayoutGrid, Network } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
-import { STATUS_INFO, displayTitle, type DocSummary, type LinkType } from "@/lib/model";
+import { DOC_STATUSES, STATUS_INFO, displayTitle, type DocSummary, type DocStatus, type LinkType } from "@/lib/model";
 import { KIND_ICONS } from "@/components/icons";
+import { Menu } from "@/components/menu";
 import { StatusDot } from "@/components/status-dot";
 import { NewDocumentMenu } from "@/components/sidebar";
 import { useDocuments } from "@/components/documents-store";
@@ -41,16 +42,52 @@ const EDGE_STYLE: Partial<Record<LinkType, { label: string; color: string; dashe
 
 function DocCard({ data }: NodeProps<DocNode>) {
   const { doc } = data;
+  const store = useDocuments();
   const Icon = KIND_ICONS[doc.kind];
   return (
-    <div className="w-64 rounded-2xl border border-line bg-surface px-4 py-3 shadow-sm transition-shadow hover:shadow-lg">
+    <div
+      className={`sw-quest-node w-64 rounded-2xl border border-line bg-surface px-4 py-3 shadow-sm transition-colors hover:shadow-lg ${doc.status === "built" ? "is-done" : ""}`}
+    >
       <Handle type="target" position={Position.Left} className="!size-2 !border-0 !bg-ink-faint" />
       <div className="flex items-center gap-2 text-xs text-ink-faint">
         <Icon size={13} />
         <span className="uppercase tracking-[0.14em]">{doc.kind}</span>
-        <span className="ml-auto flex items-center gap-1.5">
-          <StatusDot status={doc.status} /> {STATUS_INFO[doc.status].label}
-        </span>
+        <div className="nodrag nopan ml-auto">
+          <Menu align="right" className="w-52" trigger={({ toggle }) => (
+            <button
+              type="button"
+              className="flex items-center gap-1.5 rounded-md px-1.5 py-1 hover:bg-hover"
+              title="Set implementation status"
+              aria-label={`Status: ${STATUS_INFO[doc.status].label}`}
+              onClick={(event) => {
+                event.stopPropagation();
+                toggle();
+              }}
+            >
+              <StatusDot status={doc.status} />
+              {STATUS_INFO[doc.status].label}
+              <ChevronDown size={12} />
+            </button>
+          )}>
+            {(close) => DOC_STATUSES.map((status: DocStatus) => (
+              <button
+                key={status}
+                type="button"
+                className="sw-menu-item"
+                data-active={status === doc.status}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  void store.update(doc.id, { status });
+                  close();
+                }}
+              >
+                <StatusDot status={status} />
+                {STATUS_INFO[status].label}
+                {status === "built" && <Check size={14} className="ml-auto text-(--c-world)" />}
+              </button>
+            ))}
+          </Menu>
+        </div>
       </div>
       <div className="mt-1.5 font-display text-lg leading-snug text-ink">{displayTitle(doc.title, doc.kind)}</div>
       <div className="mt-1 text-xs text-ink-faint">
@@ -152,7 +189,7 @@ export function QuestMap() {
         <div className="mr-auto">
           <h1 className="font-display text-2xl">Quest map</h1>
           <p className="text-sm text-ink-faint">
-            Quests and story chapters, linked by their Start / Complete / Only if quest actions. Drag cards to arrange.
+            Quests and story chapters, linked by their Start / Complete / Only if quest actions. Set a card to Done when implemented in your game.
           </p>
         </div>
         <button type="button" className="sw-btn sw-btn-ghost border border-line" onClick={arrange}>

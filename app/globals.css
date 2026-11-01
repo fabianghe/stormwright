@@ -350,6 +350,11 @@ body::before {
   margin-top: 0;
 }
 
+.sw-quest-node.is-done {
+  border-color: var(--c-world);
+  background: color-mix(in srgb, var(--c-world) 16%, var(--surface));
+}
+
 .sw-editor .ProseMirror p.is-empty::before,
 .sw-editor .ProseMirror h1.is-empty::before,
 .sw-editor .ProseMirror h2.is-empty::before,

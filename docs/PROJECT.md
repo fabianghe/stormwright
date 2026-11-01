@@ -43,7 +43,7 @@ typewriter-style document.
 - **Sidebar** (Claude-style): New menu, search (⌘K), Home, Quest map, Pinned, sections per kind (Quests, Story,
   Characters, Places, Items, Notes) with drag-to-reorder, Trash, settings (palette, mode, sign out).
 - **Document kinds** with starter templates: quest, story, character, place, item, note. Status per document:
-  Idea → Drafting → Ready to build → In the game.
+  To do → In progress → Ready to implement → Done. On the quest map, Done means implemented in the game.
 - **Editor** (type `/` for blocks, `@` to mention):
   - **Dialogue**: speaker (autocompletes characters and previously used names), delivery note, line. Enter starts the
     next line and alternates speakers; Enter on an empty line leaves dialogue; Tab jumps to the speaker.

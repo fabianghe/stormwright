@@ -14,10 +14,10 @@ export const DOC_STATUSES = ["idea", "draft", "ready", "built"] as const;
 export type DocStatus = (typeof DOC_STATUSES)[number];
 
 export const STATUS_INFO: Record<DocStatus, { label: string }> = {
-  idea: { label: "Idea" },
-  draft: { label: "Drafting" },
-  ready: { label: "Ready to build" },
-  built: { label: "In the game" },
+  idea: { label: "To do" },
+  draft: { label: "In progress" },
+  ready: { label: "Ready to implement" },
+  built: { label: "Done" },
 };
 
 export type ActionGroup = "world" | "story" | "items" | "effects" | "conditions" | "other";
