@@ -332,6 +332,24 @@ body::before {
   margin-top: 0.85em;
 }
 
+.sw-editor .ProseMirror > .sw-field + .sw-field {
+  margin-top: 1.15em;
+  border-top: 1px solid var(--line);
+  padding-top: 1em;
+}
+
+.sw-editor .sw-field-label {
+  margin-bottom: 0.3em;
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.sw-editor .sw-field-content > :first-child {
+  margin-top: 0;
+}
+
 .sw-editor .ProseMirror p.is-empty::before,
 .sw-editor .ProseMirror h1.is-empty::before,
 .sw-editor .ProseMirror h2.is-empty::before,

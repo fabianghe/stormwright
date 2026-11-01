@@ -9,8 +9,8 @@ set story flags, give items, set off explosions, start the next quest. Everythin
 - `@` mentions a character, place, item or quest, or creates one on the spot
 - ⌘K searches everything · ⌘⇧F is focus mode · ⌘\ hides the sidebar
 - Drag documents in the sidebar to put them in your own order (on a phone: press and hold, then drag)
-- Two palettes (Paper & Ink, Storm at Dusk), each light or dark, plus optional typewriter sounds
-- Version history, trash, a quest map, and export to Markdown, JSON or PDF
+- Five palettes, including a high-contrast option, each light or dark, plus optional typewriter sounds
+- Version history, trash, a quest map, and exports to Markdown, game JSON, AI-ready project JSON or PDF.
 
 ## Run it on your computer
 

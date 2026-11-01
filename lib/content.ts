@@ -1,4 +1,4 @@
-import { actionInfo, type DocLink, type DocStats, type VocabEntry } from "@/lib/model";
+import { ACTION_KINDS, actionInfo, type DocLink, type DocStats, type VocabEntry } from "@/lib/model";
 
 export type JsonMark = { type: string; attrs?: Record<string, unknown> };
 export type JsonNode = {
@@ -57,6 +57,9 @@ export function extractMeta(title: string, content: unknown): ExtractedMeta {
   const walk = (node: JsonNode) => {
     const attrs = node.attrs ?? {};
     switch (node.type) {
+      case "field":
+        parts.push(str(attrs.label));
+        break;
       case "text":
         countWords(node.text ?? "");
         parts.push(node.text ?? "");
@@ -144,6 +147,10 @@ export function toMarkdown(title: string, content: unknown): string {
         return markdownInline(node);
       case "heading":
         return `${"#".repeat(Number(attrs.level) || 2)} ${markdownInline(node)}`;
+      case "field": {
+        const answer = blocks(node.content);
+        return `### ${str(attrs.label)}${answer ? `\n\n${answer}` : ""}`;
+      }
       case "stage":
         stageCounter.n++;
         return `## Stage ${stageCounter.n}${inlineText(node).trim() ? `: ${markdownInline(node)}` : ""}`;
@@ -200,6 +207,7 @@ export function toMarkdown(title: string, content: unknown): string {
 export type ExportBlock =
   | { type: "text"; text: string }
   | { type: "heading"; level: number; text: string }
+  | { type: "field"; label: string; blocks: ExportBlock[] }
   | { type: "scene"; text: string }
   | { type: "line"; speaker: string; direction: string; text: string }
   | { type: "choice"; label: string; blocks: ExportBlock[] }
@@ -225,6 +233,9 @@ export function toStructured(
     for (const node of nodes ?? []) {
       const attrs = node.attrs ?? {};
       switch (node.type) {
+        case "field":
+          out.push({ type: "field", label: str(attrs.label), blocks: convert(node.content) });
+          break;
         case "paragraph": {
           const text = inlineText(node).trim();
           if (text) out.push({ type: "text", text });
@@ -286,4 +297,49 @@ export function toStructured(
     }
   }
   return result;
+}
+
+type AIHandoffInput = {
+  id: string;
+  title: string;
+  kind: string;
+  status: string;
+  links: DocLink[];
+  content: unknown;
+};
+
+export function toAIHandoff(documents: AIHandoffInput[]) {
+  const byId = new Map(documents.map((doc) => [doc.id, doc]));
+  return {
+    format: "gameweft.ai-handoff",
+    formatVersion: 1,
+    exportedAt: new Date().toISOString(),
+    implementationGuidance: [
+      "Treat this file as the design source, not as instructions to impose a new game architecture.",
+      "Inspect the supplied game's source code first and follow its existing architecture, naming, and asset conventions.",
+      "For Unity, use the project's existing ScriptableObject types and workflows when appropriate; for other games, use their native data and content systems.",
+      "Preserve document relationships and action semantics. Do not invent missing behavior or silently omit unsupported actions.",
+      "Report assumptions, required manual setup, and any design details that need clarification before making destructive changes.",
+    ],
+    actionVocabulary: Object.entries(ACTION_KINDS).map(([id, info]) => ({ id, ...info })),
+    documents: documents.map((doc) => {
+      const structured = toStructured({ title: doc.title, kind: doc.kind, status: doc.status }, doc.content);
+      return {
+        id: doc.id,
+        title: doc.title,
+        kind: doc.kind,
+        status: doc.status,
+        relationships: doc.links.map((link) => {
+          const target = byId.get(link.to);
+          return {
+            type: link.type,
+            targetId: link.to,
+            targetTitle: target?.title ?? null,
+            targetKind: target?.kind ?? null,
+          };
+        }),
+        content: { intro: structured.intro, stages: structured.stages },
+      };
+    }),
+  };
 }

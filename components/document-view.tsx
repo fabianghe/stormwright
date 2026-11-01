@@ -369,7 +369,13 @@ export function DocumentView({ doc }: { doc: FullDoc }) {
               }}
             />
 
-            <StoryEditor content={doc.content} scrollRef={scrollRef} onChange={() => queue({ content: true })} onReady={onReady} />
+            <StoryEditor
+              content={doc.content}
+              kind={summary.kind}
+              scrollRef={scrollRef}
+              onChange={() => queue({ content: true })}
+              onReady={onReady}
+            />
 
             {backlinks.length > 0 && (
               <section className="sw-no-print mt-4 border-t border-line pt-5">

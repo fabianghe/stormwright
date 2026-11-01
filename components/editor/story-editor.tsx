@@ -12,12 +12,13 @@ import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { api } from "@/lib/client-api";
 import { displayTitle, type DocKind, type DocSummary, type VocabEntry } from "@/lib/model";
 import { extractMeta } from "@/lib/content";
+import { upgradeSectionFields } from "@/lib/templates";
 import { playKey, playReturn } from "@/lib/typewriter-sound";
 import { useDocuments } from "@/components/documents-store";
 import { usePreferences } from "@/components/preferences";
 import { EditorDataProvider, type EditorData } from "./editor-data";
 import { Action } from "./extensions/action";
-import { Note, Scene, Stage } from "./extensions/blocks";
+import { Field, Note, Scene, Stage } from "./extensions/blocks";
 import { Choice } from "./extensions/choice";
 import { Dialogue } from "./extensions/dialogue";
 import { createMention, setMentionSource } from "./extensions/mention";
@@ -25,6 +26,7 @@ import { SlashCommand } from "./extensions/slash";
 
 type Props = {
   content: unknown;
+  kind: DocKind;
   scrollRef: RefObject<HTMLElement | null>;
   onChange: () => void;
   onReady: (editor: Editor) => void;
@@ -62,11 +64,12 @@ function placeholderFor(name: string, level?: number) {
   }
 }
 
-export function StoryEditor({ content, scrollRef, onChange, onReady }: Props) {
+export function StoryEditor({ content, kind, scrollRef, onChange, onReady }: Props) {
   const router = useRouter();
   const store = useDocuments();
   const prefs = usePreferences();
   const [vocab, setVocab] = useState<VocabEntry[]>([]);
+  const upgraded = useMemo(() => upgradeSectionFields(kind, content), [kind, content]);
 
   const live = useRef({ store, router, prefs, onChange, onReady });
   useEffect(() => {
@@ -97,6 +100,7 @@ export function StoryEditor({ content, scrollRef, onChange, onReady }: Props) {
       CharacterCount,
       Focus.configure({ mode: "shallowest" }),
       Stage,
+      Field,
       Scene,
       Note,
       Dialogue,
@@ -110,7 +114,7 @@ export function StoryEditor({ content, scrollRef, onChange, onReady }: Props) {
 
   const editor = useEditor({
     extensions,
-    content: content as object,
+    content: upgraded.content as object,
     immediatelyRender: false,
     editorProps: {
       attributes: { spellcheck: "true", class: "sw-prose" },
@@ -133,13 +137,18 @@ export function StoryEditor({ content, scrollRef, onChange, onReady }: Props) {
       },
     },
     onCreate: ({ editor }) => {
-      const heading = editor.state.doc.firstChild;
-      const paragraph = editor.state.doc.childCount > 1 ? editor.state.doc.child(1) : null;
-      if (heading?.type.name === "heading" && paragraph?.type.name === "paragraph" && paragraph.content.size === 0) {
-        editor.commands.setTextSelection(heading.nodeSize + 1);
+      const firstField = editor.state.doc.firstChild;
+      const firstParagraph = firstField?.firstChild;
+      if (
+        firstField?.type.name === "field" &&
+        firstParagraph?.type.name === "paragraph" &&
+        firstParagraph.content.size === 0
+      ) {
+        editor.commands.setTextSelection(2);
       }
       syncReferences(editor, live.current.store.docsById);
       live.current.onReady(editor);
+      if (upgraded.changed) live.current.onChange();
     },
     onUpdate: () => live.current.onChange(),
   });

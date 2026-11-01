@@ -1,6 +1,45 @@
 import { Node, mergeAttributes } from "@tiptap/core";
 import { exitContainerOnEmptyLast } from "./helpers";
 
+export const Field = Node.create({
+  name: "field",
+  group: "block",
+  content: "block+",
+  defining: true,
+  isolating: true,
+
+  addAttributes() {
+    return { label: { default: "", rendered: false } };
+  },
+
+  parseHTML() {
+    return [
+      {
+        tag: 'section[data-type="field"]',
+        contentElement: ".sw-field-content",
+        getAttrs: (element) => ({
+          label: (element as HTMLElement).querySelector(".sw-field-label")?.textContent ?? "",
+        }),
+      },
+    ];
+  },
+
+  renderHTML({ HTMLAttributes, node }) {
+    return [
+      "section",
+      mergeAttributes(HTMLAttributes, { "data-type": "field", class: "sw-field" }),
+      ["div", { class: "sw-field-label", contenteditable: "false" }, node.attrs.label],
+      ["div", { class: "sw-field-content" }, 0],
+    ];
+  },
+
+  addKeyboardShortcuts() {
+    return {
+      Enter: ({ editor }) => exitContainerOnEmptyLast(editor, this.name),
+    };
+  },
+});
+
 export const Stage = Node.create({
   name: "stage",
   group: "block",

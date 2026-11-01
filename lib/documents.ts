@@ -63,6 +63,26 @@ export async function listDocuments(userId: string, trash = false): Promise<DocS
   return rows.map(toSummary);
 }
 
+export async function listFullDocuments(userId: string): Promise<FullDoc[]> {
+  const db = await getDb();
+  const rows = await db
+    .select({
+      ...summaryColumns,
+      content: schema.documents.content,
+      createdAt: schema.documents.createdAt,
+      deletedAt: schema.documents.deletedAt,
+    })
+    .from(schema.documents)
+    .where(and(eq(schema.documents.userId, userId), isNull(schema.documents.deletedAt)))
+    .orderBy(asc(schema.documents.position), desc(schema.documents.updatedAt));
+  return rows.map((row) => ({
+    ...toSummary(row),
+    content: row.content,
+    createdAt: row.createdAt.toISOString(),
+    deletedAt: row.deletedAt?.toISOString() ?? null,
+  }));
+}
+
 export async function getDocument(userId: string, id: string): Promise<FullDoc | null> {
   const db = await getDb();
   const [row] = await db

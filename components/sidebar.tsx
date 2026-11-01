@@ -2,6 +2,7 @@
 
 import {
   ChevronRight,
+  Download,
   House,
   LogOut,
   Monitor,
@@ -39,7 +40,8 @@ import { usePathname } from "next/navigation";
 import { useRef, useState, type MutableRefObject } from "react";
 import { APP_NAME } from "@/lib/brand";
 import { api } from "@/lib/client-api";
-import { DOC_KINDS, KIND_INFO, displayTitle, type DocKind, type DocSummary } from "@/lib/model";
+import { toAIHandoff } from "@/lib/content";
+import { DOC_KINDS, KIND_INFO, displayTitle, type DocKind, type DocSummary, type FullDoc } from "@/lib/model";
 import { MODES, PALETTES, type Mode, type Palette } from "@/lib/theme";
 import { KIND_ICONS } from "@/components/icons";
 import { LogoMark } from "@/components/logo";
@@ -205,6 +207,30 @@ function Section({
 function SettingsMenu({ username }: { username: string }) {
   const prefs = usePreferences();
   const { theme, setTheme } = prefs;
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState(false);
+
+  const exportProject = async (close: () => void) => {
+    setExporting(true);
+    setExportError(false);
+    try {
+      const { documents } = await api<{ documents: FullDoc[] }>("/api/documents/export");
+      const url = URL.createObjectURL(
+        new Blob([JSON.stringify(toAIHandoff(documents), null, 2)], { type: "application/json" }),
+      );
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `gameweft-project-${new Date().toISOString().slice(0, 10)}.json`;
+      anchor.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      close();
+    } catch {
+      setExportError(true);
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <Menu
       side="top"
@@ -260,6 +286,16 @@ function SettingsMenu({ username }: { username: string }) {
               );
             })}
           </div>
+          <div className="my-1 border-t border-line" />
+          <button
+            type="button"
+            className="sw-menu-item"
+            disabled={exporting}
+            onClick={() => void exportProject(close)}
+          >
+            <Download size={15} /> {exporting ? "Preparing export..." : "Export project for AI (.json)"}
+          </button>
+          {exportError && <p className="px-2.5 py-1 text-xs text-(--c-effects)">Export failed. Please try again.</p>}
           <div className="my-1 border-t border-line" />
           <button
             type="button"

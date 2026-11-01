@@ -63,13 +63,12 @@ typewriter-style document.
   drag to arrange (positions saved), "Tidy up" to auto-layout.
 - **Focus mode** (⌘⇧F): hides the chrome, dims everything but the current paragraph, keeps the caret centred.
 - **Typewriter sounds** (optional, synthesised with WebAudio: key clacks and a carriage-return bell).
-- **Export**: Markdown, structured JSON (intro + stages, each with lines / choices / actions; meant for a future
-  Unity importer), and Print / Save as PDF.
+- **Export**: Markdown, structured per-document game JSON, an AI-ready project JSON with all active documents,
+  relationships, action vocabulary and architecture-neutral implementation guidance, and Print / Save as PDF.
 - Home page with greeting, quick-create cards, recent documents, totals and keyboard tips.
 
 ## Ideas for later (not built)
-
-- **Unity importer**: read the JSON export and create/update VIRTUOUS assets. Mapping to the game's systems:
+- **Unity importer**: read the AI-ready JSON and create/update VIRTUOUS assets. Mapping to the game's systems:
   stages → `QuestStage`, Set story flag → `StoryFlag`/`StoryFlagAction`, Give/Take item → `GiveItemAction`/
   `RemoveItemAction` with `ItemSO`, Start/Complete quest → `SetQuestStatusAction`/`TurnInQuestAction`,
   Report event → `QuestEvents.Report(QuestVerb, GameTag)`, Turn ON/OFF → `QuestActivator`, dialogue lines →
