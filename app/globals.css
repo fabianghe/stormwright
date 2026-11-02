@@ -477,6 +477,15 @@ body::before {
   pointer-events: none;
   color: var(--ink-faint);
 }
+.sw-editor .sw-field-content > p.is-empty:only-child::before {
+  content: "Write here…";
+}
+.sw-editor .sw-field[data-label="Active short description"] .sw-field-content > p.is-empty:only-child::before {
+  content: "What the player sees while the quest is active…";
+}
+.sw-editor .sw-quest-page > p.is-empty:only-child::before {
+  content: "Dialogue and actions for this state. Press / for blocks…";
+}
 .sw-editor .ProseMirror .sw-dialogue.is-empty .sw-dialogue-line::before {
   content: "What do they say?";
   float: left;

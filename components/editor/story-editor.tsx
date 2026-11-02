@@ -101,20 +101,7 @@ export function StoryEditor({ content, kind, scrollRef, onChange, onReady }: Pro
       Placeholder.configure({
         includeChildren: true,
         showOnlyCurrent: false,
-        placeholder: ({ editor: e, node, pos, hasAnchor }) => {
-          if (node.type.name === "paragraph") {
-            const parent = e.state.doc.resolve(pos).parent;
-            if (parent.childCount === 1 && parent.type.name === "questStatePage") {
-              return "Dialogue and actions for this state. Press / for blocks…";
-            }
-            if (parent.childCount === 1 && parent.type.name === "field") {
-              return String(parent.attrs.label).toLowerCase() === "active short description"
-                ? "What the player sees while the quest is active…"
-                : "Write here…";
-            }
-          }
-          return hasAnchor ? placeholderFor(node.type.name, node.attrs.level) : "";
-        },
+        placeholder: ({ node, hasAnchor }) => (hasAnchor ? placeholderFor(node.type.name, node.attrs.level) : ""),
       }),
       CharacterCount,
       Focus.configure({ mode: "shallowest" }),
