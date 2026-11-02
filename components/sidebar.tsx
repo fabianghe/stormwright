@@ -7,7 +7,9 @@ import {
   Folder,
   Download,
   House,
+  Inbox,
   LogOut,
+  MessageSquareHeart,
   Network,
   PanelLeftClose,
   Pencil,
@@ -42,8 +44,9 @@ import { useRef, useState, type MutableRefObject } from "react";
 import { APP_NAME } from "@/lib/brand";
 import { api } from "@/lib/client-api";
 import { toAIHandoff } from "@/lib/content";
-import { DOC_KINDS, KIND_INFO, displayTitle, type DocKind, type DocSummary, type FullDoc, type ProjectSummary } from "@/lib/model";
+import { DOC_KINDS, KIND_INFO, displayTitle, docColor, type DocKind, type DocSummary, type FullDoc, type ProjectSummary } from "@/lib/model";
 import { AppearanceOptions } from "@/components/appearance-options";
+import { FeedbackDialog } from "@/components/feedback-dialog";
 import { KIND_ICONS } from "@/components/icons";
 import { LogoMark } from "@/components/logo";
 import { Menu } from "@/components/menu";
@@ -124,7 +127,11 @@ function DocRow({
         }}
         className="flex min-w-0 flex-1 items-center gap-2.5 py-1.5 pl-2.5 text-[0.88rem]"
       >
-        <Icon size={14} className={active ? "shrink-0 text-accent" : "shrink-0 text-ink-faint"} />
+        <Icon
+          size={14}
+          className={active ? "shrink-0 text-accent" : "shrink-0 text-ink-faint"}
+          data-color={docColor(doc) ?? undefined}
+        />
         <span className="truncate">{displayTitle(doc.title, doc.kind)}</span>
         <StatusDot status={doc.status} className="ml-auto opacity-70" />
       </Link>
@@ -453,16 +460,19 @@ function SettingsMenu({ username }: { username: string }) {
 
 export function Sidebar({
   username,
+  isOwner,
   projects,
   activeProject,
   onOpenSearch,
 }: {
   username: string;
+  isOwner: boolean;
   projects: ProjectSummary[];
   activeProject: ProjectSummary;
   onOpenSearch: () => void;
 }) {
   const pathname = usePathname();
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const store = useDocuments();
   const prefs = usePreferences();
   const activeId = pathname.startsWith("/d/") ? pathname.slice(3) : null;
@@ -492,6 +502,9 @@ export function Sidebar({
         <Link href="/" onClick={onNavigate} className="font-display text-xl tracking-wide">
           {APP_NAME}
         </Link>
+        <span className="rounded-full border border-line px-1.5 text-[0.62rem] uppercase tracking-[0.14em] text-ink-faint">
+          Beta
+        </span>
         <button
           type="button"
           title="Hide sidebar"
@@ -539,6 +552,16 @@ export function Sidebar({
       </nav>
 
       <div className="border-t border-line p-2">
+        {isOwner && navLink("/feedback", "Feedback inbox", Inbox)}
+        <button
+          type="button"
+          onClick={() => setFeedbackOpen(true)}
+          className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[0.9rem] text-ink-soft transition-colors hover:bg-hover hover:text-ink"
+        >
+          <MessageSquareHeart size={15} className="text-ink-faint" />
+          Send feedback
+        </button>
+        {feedbackOpen && <FeedbackDialog onClose={() => setFeedbackOpen(false)} />}
         {navLink("/trash", "Trash", Trash)}
         <SettingsMenu username={username} />
       </div>

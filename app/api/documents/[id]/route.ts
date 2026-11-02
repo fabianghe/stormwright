@@ -1,6 +1,6 @@
 import { deleteForever, getDocument, setDeleted, updateDocument, type DocumentPatch } from "@/lib/documents";
 import { checkMutation, fail, readJson, requireUser } from "@/lib/api";
-import { isDocKind, isDocStatus } from "@/lib/model";
+import { isCharacterColor, isDocKind, isDocStatus } from "@/lib/model";
 import { getActiveProject } from "@/lib/projects";
 
 type Context = { params: Promise<{ id: string }> };
@@ -30,6 +30,7 @@ export async function PATCH(request: Request, { params }: Context) {
   if (typeof body.title === "string") patch.title = body.title.slice(0, 300);
   if (isDocKind(body.kind)) patch.kind = body.kind;
   if (isDocStatus(body.status)) patch.status = body.status;
+  if (body.color === null || isCharacterColor(body.color)) patch.color = body.color;
   if (typeof body.pinned === "boolean") patch.pinned = body.pinned;
   if (typeof body.position === "number" && Number.isFinite(body.position)) patch.position = body.position;
   if ("mapX" in body) patch.mapX = finiteOrNull(body.mapX);

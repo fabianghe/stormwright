@@ -2,7 +2,7 @@
 
 import { useMemo, useState, type KeyboardEvent, type Ref } from "react";
 
-export type ComboOption = { id?: string; label: string; hint?: string };
+export type ComboOption = { id?: string; label: string; hint?: string; color?: string | null };
 
 type Props = {
   value: string;
@@ -120,6 +120,7 @@ export function Combo({
               }}
               onMouseEnter={() => setActive(i)}
             >
+              {option.color && <span className="sw-char-dot" data-color={option.color} />}
               <span className="truncate">{option.label}</span>
               {option.hint && <span className="ml-auto shrink-0 text-xs text-ink-faint">{option.hint}</span>}
             </button>

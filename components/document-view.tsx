@@ -22,11 +22,14 @@ import { api } from "@/lib/client-api";
 import { toMarkdown, toStructured } from "@/lib/content";
 import { prepareContent } from "@/lib/templates";
 import {
+  CHARACTER_COLORS,
+  COLOR_INFO,
   DOC_KINDS,
   DOC_STATUSES,
   KIND_INFO,
   STATUS_INFO,
   displayTitle,
+  docColor,
   type DocKind,
   type DocStatus,
   type DocSummary,
@@ -346,6 +349,47 @@ export function DocumentView({ doc }: { doc: FullDoc }) {
                   ))
                 }
               </Menu>
+              {summary.kind === "character" && (
+                <Menu
+                  trigger={({ toggle }) => (
+                    <button type="button" className="sw-chip" onClick={toggle}>
+                      <span className="sw-char-dot" data-color={summary.color ?? undefined} />{" "}
+                      {summary.color ? COLOR_INFO[summary.color].label : "Colour"}
+                    </button>
+                  )}
+                >
+                  {(close) => (
+                    <>
+                      {CHARACTER_COLORS.map((color) => (
+                        <button
+                          key={color}
+                          type="button"
+                          className="sw-menu-item"
+                          data-active={color === summary.color}
+                          onClick={() => {
+                            void store.update(doc.id, { color });
+                            close();
+                          }}
+                        >
+                          <span className="sw-char-dot" data-color={color} /> {COLOR_INFO[color].label}
+                        </button>
+                      ))}
+                      <div className="my-1 border-t border-line" />
+                      <button
+                        type="button"
+                        className="sw-menu-item"
+                        data-active={summary.color === null}
+                        onClick={() => {
+                          void store.update(doc.id, { color: null });
+                          close();
+                        }}
+                      >
+                        <span className="sw-char-dot" /> No colour
+                      </button>
+                    </>
+                  )}
+                </Menu>
+              )}
               {summary.pinned && (
                 <span className="sw-chip !cursor-default">
                   <Pin size={12} /> Pinned
@@ -389,7 +433,7 @@ export function DocumentView({ doc }: { doc: FullDoc }) {
                     const Icon = KIND_ICONS[d.kind];
                     return (
                       <Link key={d.id} href={`/d/${d.id}`} className="sw-chip">
-                        <Icon size={13} /> {displayTitle(d.title, d.kind)}
+                        <Icon size={13} data-color={docColor(d) ?? undefined} /> {displayTitle(d.title, d.kind)}
                       </Link>
                     );
                   })}

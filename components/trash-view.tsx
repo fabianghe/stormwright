@@ -3,7 +3,7 @@
 import { RotateCcw, Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/client-api";
-import { displayTitle, type DocSummary } from "@/lib/model";
+import { displayTitle, docColor, type DocSummary } from "@/lib/model";
 import { timeAgo } from "@/lib/time";
 import { KIND_ICONS } from "@/components/icons";
 import { useDocuments } from "@/components/documents-store";
@@ -46,7 +46,7 @@ export function TrashView() {
                 const Icon = KIND_ICONS[doc.kind];
                 return (
                   <li key={doc.id} className="flex items-center gap-3 px-4 py-3">
-                    <Icon size={16} className="shrink-0 text-ink-faint" />
+                    <Icon size={16} className="shrink-0 text-ink-faint" data-color={docColor(doc) ?? undefined} />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate">{displayTitle(doc.title, doc.kind)}</span>
                       <span className="text-xs text-ink-faint">Edited {timeAgo(doc.updatedAt)}</span>

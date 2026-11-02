@@ -2,7 +2,7 @@ import type { Editor } from "@tiptap/core";
 import Mention from "@tiptap/extension-mention";
 import { PluginKey } from "@tiptap/pm/state";
 import { Plus } from "lucide-react";
-import { DOC_KINDS, KIND_INFO, displayTitle, type DocKind, type DocSummary } from "@/lib/model";
+import { DOC_KINDS, KIND_INFO, displayTitle, docColor, type DocKind, type DocSummary } from "@/lib/model";
 import { KIND_ICONS } from "@/components/icons";
 import { popupRenderer, type SuggestionItem } from "../suggestion-list";
 
@@ -49,6 +49,7 @@ export function createMention() {
             title: displayTitle(d.title, d.kind),
             hint: KIND_INFO[d.kind].label,
             icon: KIND_ICONS[d.kind],
+            color: docColor(d),
             group: "Mention",
           }));
         const exact = docs.some((d) => d.title.toLowerCase() === q);

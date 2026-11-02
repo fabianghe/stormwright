@@ -51,6 +51,7 @@ export const documents = pgTable(
     title: text("title").default("").notNull(),
     kind: text("kind").default("note").notNull(),
     status: text("status").default("idea").notNull(),
+    color: text("color"),
     content: jsonb("content"),
     pinned: boolean("pinned").default(false).notNull(),
     position: doublePrecision("position").default(0).notNull(),
@@ -82,4 +83,20 @@ export const documentVersions = pgTable(
     createdAt: createdAt(),
   },
   (t) => [index("versions_document_idx").on(t.documentId, t.createdAt)],
+);
+
+export const feedback = pgTable(
+  "feedback",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    kind: text("kind").default("idea").notNull(),
+    message: text("message").notNull(),
+    path: text("path").default("").notNull(),
+    done: boolean("done").default(false).notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [index("feedback_created_idx").on(t.createdAt)],
 );

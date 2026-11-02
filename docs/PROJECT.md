@@ -51,6 +51,10 @@ typewriter-style document.
   original project.
 - **Document kinds** with starter templates: quest (including an Active short description), story, character, place, item, note. Status per document:
   To do → In progress → Ready to implement → Done. On the quest map, Done means implemented in the game.
+- **Character colours**: each character can pick one of eight named colours (Rose, Ember, Gold, Moss, Teal, Sky,
+  Iris, Plum), or none. Each colour has a light and a dark shade, blended toward the palette's ink, so it fits every
+  theme. It tints their dialogue (speaker, quote mark, line bar), @mentions, their icon in lists and suggestions, and
+  is included in the AI-ready export.
 - **Editor** (type `/` for blocks, `@` to mention):
   - **Dialogue**: speaker (autocompletes characters and previously used names), delivery note, line. Enter starts the
     next line and alternates speakers; Enter on an empty line leaves dialogue; Tab jumps to the speaker.
@@ -74,6 +78,9 @@ typewriter-style document.
   off in the settings menu (next to the palettes), in the document header, or on the sign-in page.
 - **Export**: Markdown, structured per-document game JSON, an AI-ready project JSON with all active documents,
   relationships, action vocabulary and architecture-neutral implementation guidance, and Print / Save as PDF.
+- **Beta feedback**: a "Beta" tag by the logo and a "Send feedback" button in the sidebar (Idea / Problem / Other +
+  message, saved in the database with the page it was sent from). The owner (the first account created) gets a
+  "Feedback inbox" page to read them, mark them done or delete them; other accounts can't see it.
 - Home page with greeting, quick-create cards, recent documents, totals and keyboard tips.
 
 ## Ideas for later (not built)

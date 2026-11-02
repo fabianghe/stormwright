@@ -334,6 +334,7 @@ type AIHandoffInput = {
   title: string;
   kind: string;
   status: string;
+  color?: string | null;
   links: DocLink[];
   content: unknown;
 };
@@ -365,6 +366,7 @@ export function toAIHandoff(project: { id: string; name: string }, documents: AI
         title: doc.title,
         kind: doc.kind,
         status: doc.status,
+        ...(doc.kind === "character" && doc.color ? { color: doc.color } : {}),
         relationships: doc.links.map((link) => {
           const target = byId.get(link.to);
           return {

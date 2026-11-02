@@ -11,7 +11,7 @@ type Store = {
   upsert: (doc: DocSummary) => void;
   remove: (id: string) => void;
   create: (kind: DocKind, title?: string, open?: boolean) => Promise<DocSummary | null>;
-  update: (id: string, patch: Partial<Pick<DocSummary, "title" | "pinned" | "position" | "status" | "kind" | "mapX" | "mapY">>) => Promise<void>;
+  update: (id: string, patch: Partial<Pick<DocSummary, "title" | "pinned" | "position" | "status" | "color" | "kind" | "mapX" | "mapY">>) => Promise<void>;
   trash: (id: string) => Promise<void>;
   reorder: (orderedIds: string[], movedId: string) => void;
 };

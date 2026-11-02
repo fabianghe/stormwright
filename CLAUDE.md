@@ -52,13 +52,14 @@ app/
   globals.css             palettes (light-dark() vars), UI primitives (.sw-btn, .sw-menu…), editor styles
   login/                  first run creates the account, later it's a sign-in form
   (app)/                  authenticated area: layout loads user + document list into AppShell
-    page.tsx              home   · d/[id]  document · map  quest map · trash
-  api/                    route handlers: auth/*, documents (+ [id], restore, versions), vocab, search
+    page.tsx              home   · d/[id]  document · map  quest map · trash · feedback (owner only)
+  api/                    route handlers: auth/*, documents (+ [id], restore, versions), vocab, search, feedback
 lib/
   model.ts                document kinds, statuses, ACTION_KINDS (labels, groups, link types), shared types
   content.ts              walks Tiptap JSON: extractMeta (links, vocab, stats, search text), toMarkdown, toStructured
   documents.ts            data access (all queries scoped by userId), version snapshots
   auth.ts / api.ts        scrypt passwords, DB sessions (sha256 of the cookie token), JSON + same-origin checks
+  feedback.ts             beta feedback; isOwner() = the first account created (sees the inbox)
   db/                     schema.ts, index.ts (Neon or PGlite), migrations live in /drizzle
   theme.ts, brand.ts, templates.ts, typewriter-sound.ts, client-api.ts, time.ts
 components/

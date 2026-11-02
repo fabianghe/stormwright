@@ -3,7 +3,7 @@ import { and, asc, desc, eq, ilike, isNotNull, isNull, min } from "drizzle-orm";
 import { getDb, schema } from "@/lib/db";
 import { extractMeta } from "@/lib/content";
 import { templateFor } from "@/lib/templates";
-import type { DocKind, DocSummary, FullDoc, VocabEntry } from "@/lib/model";
+import { isCharacterColor, type DocKind, type DocSummary, type FullDoc, type VocabEntry } from "@/lib/model";
 
 const VERSION_EVERY_MS = 10 * 60 * 1000;
 const MAX_VERSIONS = 60;
@@ -13,6 +13,7 @@ const summaryColumns = {
   title: schema.documents.title,
   kind: schema.documents.kind,
   status: schema.documents.status,
+  color: schema.documents.color,
   pinned: schema.documents.pinned,
   position: schema.documents.position,
   updatedAt: schema.documents.updatedAt,
@@ -27,6 +28,7 @@ type SummaryRow = {
   title: string;
   kind: string;
   status: string;
+  color: string | null;
   pinned: boolean;
   position: number;
   updatedAt: Date;
@@ -41,6 +43,7 @@ function toSummary(row: SummaryRow): DocSummary {
     ...row,
     kind: row.kind as DocSummary["kind"],
     status: row.status as DocSummary["status"],
+    color: isCharacterColor(row.color) ? row.color : null,
     updatedAt: row.updatedAt.toISOString(),
   };
 }
@@ -136,6 +139,7 @@ export type DocumentPatch = {
   title?: string;
   kind?: DocKind;
   status?: DocSummary["status"];
+  color?: DocSummary["color"];
   pinned?: boolean;
   position?: number;
   content?: unknown;
@@ -157,6 +161,7 @@ export async function updateDocument(userId: string, projectId: string, id: stri
   if (patch.title !== undefined) values.title = patch.title;
   if (patch.kind !== undefined) values.kind = patch.kind;
   if (patch.status !== undefined) values.status = patch.status;
+  if (patch.color !== undefined) values.color = patch.color;
   if (patch.pinned !== undefined) values.pinned = patch.pinned;
   if (patch.position !== undefined) values.position = patch.position;
   if (patch.mapX !== undefined) values.mapX = patch.mapX;

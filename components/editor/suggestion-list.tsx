@@ -11,6 +11,7 @@ export type SuggestionItem = {
   hint?: string;
   group?: string;
   icon?: LucideIcon;
+  color?: string | null;
 };
 
 type ListProps = {
@@ -80,7 +81,7 @@ export const SuggestionList = forwardRef<SuggestionListHandle, ListProps>(functi
             >
               {Icon && (
                 <span className="grid size-7 shrink-0 place-items-center rounded-md border border-line bg-surface text-ink-soft">
-                  <Icon size={15} />
+                  <Icon size={15} data-color={item.color ?? undefined} />
                 </span>
               )}
               <span className="min-w-0 flex-1">

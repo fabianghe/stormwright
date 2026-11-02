@@ -9,7 +9,19 @@ import { DocumentsProvider } from "@/components/documents-store";
 import { PreferencesProvider, usePreferences } from "@/components/preferences";
 import { Sidebar } from "@/components/sidebar";
 
-function Frame({ username, projects, activeProject, children }: { username: string; projects: ProjectSummary[]; activeProject: ProjectSummary; children: ReactNode }) {
+function Frame({
+  username,
+  isOwner,
+  projects,
+  activeProject,
+  children,
+}: {
+  username: string;
+  isOwner: boolean;
+  projects: ProjectSummary[];
+  activeProject: ProjectSummary;
+  children: ReactNode;
+}) {
   const prefs = usePreferences();
   const [searchOpen, setSearchOpen] = useState(false);
   const closeSearch = useCallback(() => setSearchOpen(false), []);
@@ -47,6 +59,7 @@ function Frame({ username, projects, activeProject, children }: { username: stri
       >
         <Sidebar
           username={username}
+          isOwner={isOwner}
           projects={projects}
           activeProject={activeProject}
           onOpenSearch={() => setSearchOpen(true)}
@@ -80,6 +93,7 @@ function Frame({ username, projects, activeProject, children }: { username: stri
 
 export function AppShell({
   username,
+  isOwner,
   documents,
   projects,
   activeProject,
@@ -88,6 +102,7 @@ export function AppShell({
   children,
 }: {
   username: string;
+  isOwner: boolean;
   documents: DocSummary[];
   projects: ProjectSummary[];
   activeProject: ProjectSummary;
@@ -98,7 +113,7 @@ export function AppShell({
   return (
     <PreferencesProvider initialTheme={theme} initialSounds={sounds}>
       <DocumentsProvider key={activeProject.id} initial={documents}>
-        <Frame username={username} projects={projects} activeProject={activeProject}>
+        <Frame username={username} isOwner={isOwner} projects={projects} activeProject={activeProject}>
           {children}
         </Frame>
       </DocumentsProvider>

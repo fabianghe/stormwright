@@ -173,6 +173,57 @@
   --texture-opacity: 0;
 }
 
+[data-palette] {
+  --char-rose: color-mix(in oklab, light-dark(#b03a55, #f08da2) 88%, var(--ink));
+  --char-ember: color-mix(in oklab, light-dark(#b04f1c, #f09a64) 88%, var(--ink));
+  --char-gold: color-mix(in oklab, light-dark(#8a6510, #e3c165) 88%, var(--ink));
+  --char-moss: color-mix(in oklab, light-dark(#4c7a2c, #a9d084) 88%, var(--ink));
+  --char-teal: color-mix(in oklab, light-dark(#1f7069, #7fd0c5) 88%, var(--ink));
+  --char-sky: color-mix(in oklab, light-dark(#2c64a6, #8fbcf0) 88%, var(--ink));
+  --char-iris: color-mix(in oklab, light-dark(#5b4db0, #b4a7f3) 88%, var(--ink));
+  --char-plum: color-mix(in oklab, light-dark(#8d3d89, #e19bd9) 88%, var(--ink));
+}
+
+[data-color="rose"] {
+  --char: var(--char-rose);
+}
+[data-color="ember"] {
+  --char: var(--char-ember);
+}
+[data-color="gold"] {
+  --char: var(--char-gold);
+}
+[data-color="moss"] {
+  --char: var(--char-moss);
+}
+[data-color="teal"] {
+  --char: var(--char-teal);
+}
+[data-color="sky"] {
+  --char: var(--char-sky);
+}
+[data-color="iris"] {
+  --char: var(--char-iris);
+}
+[data-color="plum"] {
+  --char: var(--char-plum);
+}
+.sw-char-dot {
+  display: inline-block;
+  width: 0.6rem;
+  height: 0.6rem;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--char, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 18%, transparent);
+}
+.sw-char-dot:not([data-color]) {
+  box-shadow: inset 0 0 0 1px var(--ink-faint);
+}
+svg[data-color] {
+  color: var(--char);
+}
+
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
@@ -834,6 +885,17 @@ body::before {
   font-family: var(--nf-display), serif;
   font-size: 1.5rem;
   line-height: 1;
+}
+.sw-dialogue[data-color] .sw-speaker,
+.sw-dialogue[data-color] .sw-dialogue-mark {
+  color: var(--char);
+}
+.sw-dialogue[data-color] .sw-dialogue-line {
+  border-left-color: color-mix(in srgb, var(--char) 40%, transparent);
+}
+.sw-dialogue[data-color].has-focus .sw-dialogue-line,
+.sw-dialogue[data-color]:focus-within .sw-dialogue-line {
+  border-left-color: var(--char);
 }
 
 /* choice */

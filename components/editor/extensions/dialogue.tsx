@@ -3,7 +3,7 @@
 import { Node, mergeAttributes, type Editor } from "@tiptap/core";
 import { NodeViewContent, NodeViewWrapper, ReactNodeViewRenderer, type ReactNodeViewProps } from "@tiptap/react";
 import { useEffect, useRef } from "react";
-import { displayTitle } from "@/lib/model";
+import { displayTitle, docColor } from "@/lib/model";
 import { Combo, type ComboOption } from "../combo";
 import { useEditorData } from "../editor-data";
 import { focusEditorAt, requestFieldFocus, takeFieldFocus } from "./helpers";
@@ -47,6 +47,8 @@ function DialogueView({ node, updateAttributes, editor, getPos }: ReactNodeViewP
   const speakerRef = useRef<HTMLInputElement>(null);
   const speaker = String(node.attrs.speaker ?? "");
   const direction = String(node.attrs.direction ?? "");
+  const speakerId = node.attrs.speakerId;
+  const color = typeof speakerId === "string" ? docColor(data.docsById.get(speakerId)) : null;
 
   useEffect(() => {
     if (takeFieldFocus(getPos())) speakerRef.current?.focus();
@@ -58,7 +60,9 @@ function DialogueView({ node, updateAttributes, editor, getPos }: ReactNodeViewP
   };
 
   const speakerOptions = (): ComboOption[] => [
-    ...data.docsOfKinds(["character"]).map((d) => ({ id: d.id, label: displayTitle(d.title, d.kind), hint: "character" })),
+    ...data
+      .docsOfKinds(["character"])
+      .map((d) => ({ id: d.id, label: displayTitle(d.title, d.kind), hint: "character", color: docColor(d) })),
     ...data.vocab("speaker").map((text) => ({ label: text })),
   ];
 
@@ -70,7 +74,7 @@ function DialogueView({ node, updateAttributes, editor, getPos }: ReactNodeViewP
   };
 
   return (
-    <NodeViewWrapper className="sw-dialogue" data-type="dialogue">
+    <NodeViewWrapper className="sw-dialogue" data-type="dialogue" data-color={color ?? undefined}>
       <span className="sw-dialogue-mark" contentEditable={false}>
         “
       </span>

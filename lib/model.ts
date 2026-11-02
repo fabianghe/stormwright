@@ -20,6 +20,43 @@ export const STATUS_INFO: Record<DocStatus, { label: string }> = {
   built: { label: "Done" },
 };
 
+export const CHARACTER_COLORS = ["rose", "ember", "gold", "moss", "teal", "sky", "iris", "plum"] as const;
+export type CharacterColor = (typeof CHARACTER_COLORS)[number];
+
+export const COLOR_INFO: Record<CharacterColor, { label: string }> = {
+  rose: { label: "Rose" },
+  ember: { label: "Ember" },
+  gold: { label: "Gold" },
+  moss: { label: "Moss" },
+  teal: { label: "Teal" },
+  sky: { label: "Sky" },
+  iris: { label: "Iris" },
+  plum: { label: "Plum" },
+};
+
+export const FEEDBACK_KINDS = ["idea", "problem", "other"] as const;
+export type FeedbackKind = (typeof FEEDBACK_KINDS)[number];
+
+export const FEEDBACK_INFO: Record<FeedbackKind, { label: string; placeholder: string }> = {
+  idea: { label: "Idea", placeholder: "What would make Gameweft better for you?" },
+  problem: { label: "Problem", placeholder: "What happened, and what did you expect instead?" },
+  other: { label: "Other", placeholder: "Anything on your mind…" },
+};
+
+export type FeedbackEntry = {
+  id: string;
+  username: string;
+  kind: FeedbackKind;
+  message: string;
+  path: string;
+  done: boolean;
+  createdAt: string;
+};
+
+export function isFeedbackKind(value: unknown): value is FeedbackKind {
+  return typeof value === "string" && (FEEDBACK_KINDS as readonly string[]).includes(value);
+}
+
 export const QUEST_STATES = [
   {
     state: "not_started",
@@ -127,6 +164,7 @@ export type DocSummary = {
   title: string;
   kind: DocKind;
   status: DocStatus;
+  color: CharacterColor | null;
   pinned: boolean;
   position: number;
   updatedAt: string;
@@ -148,6 +186,14 @@ export function isDocKind(value: unknown): value is DocKind {
 
 export function isDocStatus(value: unknown): value is DocStatus {
   return typeof value === "string" && (DOC_STATUSES as readonly string[]).includes(value);
+}
+
+export function isCharacterColor(value: unknown): value is CharacterColor {
+  return typeof value === "string" && (CHARACTER_COLORS as readonly string[]).includes(value);
+}
+
+export function docColor(doc: Pick<DocSummary, "kind" | "color"> | undefined) {
+  return doc?.kind === "character" ? doc.color : null;
 }
 
 export function displayTitle(title: string, kind?: DocKind) {

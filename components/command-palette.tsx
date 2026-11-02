@@ -4,7 +4,7 @@ import { FileText, Moon, Network, Plus, Search, Sun } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { api } from "@/lib/client-api";
-import { DOC_KINDS, KIND_INFO, displayTitle, isDocKind } from "@/lib/model";
+import { DOC_KINDS, KIND_INFO, displayTitle, docColor, isDocKind } from "@/lib/model";
 import { isDark } from "@/lib/theme";
 import { KIND_ICONS } from "@/components/icons";
 import { useDocuments } from "@/components/documents-store";
@@ -51,7 +51,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
         id: d.id,
         title: displayTitle(d.title, d.kind),
         hint: KIND_INFO[d.kind].label,
-        icon: <Icon size={15} />,
+        icon: <Icon size={15} data-color={docColor(d) ?? undefined} />,
         group: q ? "Documents" : "Recent",
         run: go(`/d/${d.id}`),
       };
@@ -65,7 +65,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
           id: `hit:${h.id}`,
           title: displayTitle(h.title, isDocKind(h.kind) ? h.kind : undefined),
           hint: h.snippet,
-          icon: <Icon size={15} />,
+          icon: <Icon size={15} data-color={docColor(store.docsById.get(h.id)) ?? undefined} />,
           group: "Found in text",
           run: go(`/d/${h.id}`),
         };

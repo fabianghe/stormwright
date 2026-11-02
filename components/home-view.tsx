@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { DOC_KINDS, KIND_INFO, STATUS_INFO, displayTitle } from "@/lib/model";
+import { DOC_KINDS, KIND_INFO, STATUS_INFO, displayTitle, docColor } from "@/lib/model";
 import { timeAgo } from "@/lib/time";
 import { KIND_ICONS } from "@/components/icons";
 import { StatusDot } from "@/components/status-dot";
@@ -68,7 +68,7 @@ export function HomeView({ greeting }: { greeting: string }) {
                   return (
                     <li key={doc.id}>
                       <Link href={`/d/${doc.id}`} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-hover">
-                        <Icon size={16} className="shrink-0 text-ink-faint" />
+                        <Icon size={16} className="shrink-0 text-ink-faint" data-color={docColor(doc) ?? undefined} />
                         <span className="min-w-0 flex-1">
                           <span className="block truncate">{displayTitle(doc.title, doc.kind)}</span>
                           <span className="flex items-center gap-1.5 text-xs text-ink-faint">

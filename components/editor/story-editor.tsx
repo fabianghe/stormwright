@@ -11,7 +11,7 @@ import { Bold, Highlighter, Italic, Strikethrough, Underline } from "lucide-reac
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { api } from "@/lib/client-api";
-import { displayTitle, type DocKind, type DocSummary, type VocabEntry } from "@/lib/model";
+import { displayTitle, docColor, type DocKind, type DocSummary, type VocabEntry } from "@/lib/model";
 import { extractMeta } from "@/lib/content";
 import { prepareContent } from "@/lib/templates";
 import { playKey, playReturn } from "@/lib/typewriter-sound";
@@ -33,6 +33,22 @@ type Props = {
   onChange: () => void;
   onReady: (editor: Editor) => void;
 };
+
+function mentionColorCss(docs: DocSummary[]) {
+  const byColor = new Map<string, string[]>();
+  for (const doc of docs) {
+    const color = docColor(doc);
+    if (!color || !/^[\w-]+$/.test(doc.id)) continue;
+    const ids = byColor.get(color) ?? [];
+    ids.push(`[data-id="${doc.id}"]`);
+    byColor.set(color, ids);
+  }
+  let css = "";
+  for (const [color, ids] of byColor) {
+    css += `.sw-mention:is(${ids.join(",")}){color:var(--char-${color});background:color-mix(in srgb,var(--char-${color}) 12%,transparent)}`;
+  }
+  return css;
+}
 
 function syncReferences(editor: Editor, docsById: Map<string, DocSummary>) {
   const { tr } = editor.state;
@@ -182,6 +198,8 @@ export function StoryEditor({ content, kind, scrollRef, onChange, onReady }: Pro
     };
   }, [editor, prefs.focusMode, scrollRef]);
 
+  const mentionCss = useMemo(() => mentionColorCss(store.docs), [store.docs]);
+
   const data = useMemo<EditorData>(() => {
     const byKind = (kinds: DocKind[]) => store.docs.filter((d) => kinds.includes(d.kind));
     return {
@@ -205,6 +223,7 @@ export function StoryEditor({ content, kind, scrollRef, onChange, onReady }: Pro
 
   return (
     <EditorDataProvider value={data}>
+      {mentionCss && <style>{mentionCss}</style>}
       {editor && (
         <BubbleMenu
           editor={editor}

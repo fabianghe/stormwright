@@ -11,14 +11,24 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { APP_NAME, TAGLINE } from "@/lib/brand";
-import { DOC_STATUSES, QUEST_STATES, STATUS_INFO, type DocKind, type DocStatus } from "@/lib/model";
+import { DOC_STATUSES, QUEST_STATES, STATUS_INFO, type CharacterColor, type DocKind, type DocStatus } from "@/lib/model";
 import { KIND_ICONS } from "@/components/icons";
 import { StatusDot } from "@/components/status-dot";
 import { LogoMark } from "@/components/logo";
 
-function Line({ speaker, direction, children }: { speaker: string; direction?: string; children: ReactNode }) {
+function Line({
+  speaker,
+  color,
+  direction,
+  children,
+}: {
+  speaker: string;
+  color: CharacterColor;
+  direction?: string;
+  children: ReactNode;
+}) {
   return (
-    <div className="sw-dialogue">
+    <div className="sw-dialogue" data-color={color}>
       <span className="sw-dialogue-mark">“</span>
       <div className="sw-dialogue-head">
         <span className="sw-speaker">{speaker}</span>
@@ -99,7 +109,7 @@ export function WelcomeFeatures({ className = "" }: { className?: string }) {
           icon={PanelsTopLeft}
           title="Write dialogue like a script"
           className="sm:col-span-2 lg:col-span-1 xl:col-span-2"
-          caption="Offer, In progress, Ready, Completed and Failed each get their own tab, so you write exactly what plays when. Dialogue reads like a script: speakers autocomplete from your characters, and Enter starts the next line."
+          caption="Offer, In progress, Ready, Completed and Failed each get their own tab, so you write exactly what plays when. Dialogue reads like a script: speakers autocomplete from your characters, each in their own colour, and Enter starts the next line."
         >
           <div className="sw-quest-tablist">
             {QUEST_STATES.map(({ state, tab }) => (
@@ -108,16 +118,16 @@ export function WelcomeFeatures({ className = "" }: { className?: string }) {
               </span>
             ))}
           </div>
-          <Line speaker="Wren" direction="out of breath">
+          <Line speaker="Wren" color="teal" direction="out of breath">
             Is the ferry still running tonight?
           </Line>
-          <Line speaker="Tomas" direction="gruffly">
+          <Line speaker="Tomas" color="ember" direction="gruffly">
             Not without the toll, little courier.
           </Line>
-          <Line speaker="Wren" direction="grinning">
+          <Line speaker="Wren" color="teal" direction="grinning">
             Then I&apos;ll owe you one.
           </Line>
-          <Line speaker="Tomas">Hmph. Get in before the fog does.</Line>
+          <Line speaker="Tomas" color="ember">Hmph. Get in before the fog does.</Line>
         </Feature>
         <Feature
           icon={GitBranch}
