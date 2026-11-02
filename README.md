@@ -46,6 +46,11 @@ Every push to GitHub redeploys automatically.
 **Optional:** to let other people create accounts, add an environment variable `ALLOW_SIGNUP` = `true` in Vercel
 (Settings → Environment Variables) and redeploy.
 
+**Visitor stats:** in the Vercel project open **Analytics** and click **Enable**, then redeploy. You'll see visitors,
+page views, top pages, where people come from, countries, devices and browsers. It uses no cookies and collects no
+personal data, so no consent banner is needed. Free up to 50,000 page views a month; above that, counting pauses
+until the next month (you're never charged).
+
 Vercel's free plan is meant for personal, non-commercial projects. If Gameweft becomes a business, move to a paid plan.
 
 ## Renaming

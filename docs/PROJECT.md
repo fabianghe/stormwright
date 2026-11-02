@@ -31,6 +31,7 @@ typewriter-style document.
 | --- | --- |
 | Name | **Gameweft**. The name lives in `lib/brand.ts`. |
 | Hosting | Online and free: **Vercel** (app) + **Neon** (Postgres, free tier). Locally it runs with zero setup on an embedded database. |
+| Analytics | **Vercel Web Analytics**: cookie-free, no personal data, so no consent banner. Free tier (50k page views/month, 1 month of history, no custom events). Turned on in the Vercel dashboard. |
 | Users | Single user for now; the first account is created on first visit, then sign-up closes (`ALLOW_SIGNUP=true` reopens it). |
 | Writing model | **Free writing + inserted blocks** (not a rigid form): dialogue lines, player choices, quest stages, scene headings, notes, and **action blocks**. |
 | Look | Seven palettes, each with light and dark. The originals: **Paper & Ink** (cream paper, ink, ribbon-red; dark = charcoal with amber lamp glow) and **Storm at Dusk** (rain-washed slate, lavender; dark = midnight slate with violet and a lightning-yellow spark), made first by Claude. Later added: **Ember & Ash**, **Moonlit Pine**, **Terracotta & Sand**, **Aurora** and **Screenplay** (black on white, inverted in dark mode). Plus "match device". |

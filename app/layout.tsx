@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { Courier_Prime, Special_Elite } from "next/font/google";
 import { cookies } from "next/headers";
 import { APP_NAME, TAGLINE } from "@/lib/brand";
@@ -33,7 +34,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${typeFont.variable} ${displayFont.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="h-full">{children}</body>
+      <body className="h-full">
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
