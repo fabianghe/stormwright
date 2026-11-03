@@ -1,4 +1,4 @@
-export const DOC_KINDS = ["quest", "story", "character", "place", "item", "note"] as const;
+export const DOC_KINDS = ["quest", "story", "character", "place", "item", "note", "task"] as const;
 export type DocKind = (typeof DOC_KINDS)[number];
 
 export const KIND_INFO: Record<DocKind, { label: string; plural: string; blurb: string }> = {
@@ -8,6 +8,7 @@ export const KIND_INFO: Record<DocKind, { label: string; plural: string; blurb: 
   place: { label: "Place", plural: "Places", blurb: "Locations, moods and secrets" },
   item: { label: "Item", plural: "Items", blurb: "Things to find, carry and give" },
   note: { label: "Note", plural: "Notes", blurb: "Lore, ideas and loose thoughts" },
+  task: { label: "Task", plural: "Tasks", blurb: "Menus, systems and polish to build" },
 };
 
 export const DOC_STATUSES = ["idea", "draft", "ready", "built"] as const;
@@ -172,6 +173,7 @@ export type DocSummary = {
   stats: DocStats;
   mapX: number | null;
   mapY: number | null;
+  mapLinks: string[];
 };
 
 export type FullDoc = DocSummary & {
@@ -182,6 +184,12 @@ export type FullDoc = DocSummary & {
 
 export function isDocKind(value: unknown): value is DocKind {
   return typeof value === "string" && (DOC_KINDS as readonly string[]).includes(value);
+}
+
+export const MAP_HIDDEN_COOKIE = "sw_map_hidden";
+
+export function parseHiddenKinds(value: string | undefined): DocKind[] {
+  return (value ?? "").split(",").filter(isDocKind);
 }
 
 export function isDocStatus(value: unknown): value is DocStatus {

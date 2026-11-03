@@ -513,6 +513,9 @@ body::before {
   margin-top: 0;
 }
 
+.sw-quest-node.is-task {
+  background: color-mix(in srgb, var(--accent) 7%, var(--surface));
+}
 .sw-quest-node.is-done {
   border-color: var(--c-world);
   background: color-mix(in srgb, var(--c-world) 16%, var(--surface));
@@ -1029,7 +1032,7 @@ body::before {
   opacity: 1;
 }
 
-/* quest map */
+/* todo map */
 .react-flow {
   --xy-background-color: transparent;
   --xy-edge-stroke: var(--ink-faint);

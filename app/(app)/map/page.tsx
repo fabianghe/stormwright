@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
-import { QuestMap } from "@/components/quest-map";
+import { cookies } from "next/headers";
+import { TodoMap } from "@/components/todo-map";
+import { MAP_HIDDEN_COOKIE, parseHiddenKinds } from "@/lib/model";
 
-export const metadata: Metadata = { title: "Quest map" };
+export const metadata: Metadata = { title: "Todo map" };
 
-export default function MapPage() {
-  return <QuestMap />;
+export default async function MapPage() {
+  const hidden = parseHiddenKinds((await cookies()).get(MAP_HIDDEN_COOKIE)?.value);
+  return <TodoMap initialHidden={hidden} />;
 }

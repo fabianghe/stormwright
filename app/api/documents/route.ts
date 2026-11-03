@@ -20,6 +20,11 @@ export async function POST(request: Request) {
   const kind = body.kind ?? "note";
   if (!isDocKind(kind)) return fail("Unknown document kind");
   const title = typeof body.title === "string" ? body.title.slice(0, 300) : "";
+  const { mapX, mapY } = body;
+  const place =
+    typeof mapX === "number" && Number.isFinite(mapX) && typeof mapY === "number" && Number.isFinite(mapY)
+      ? { x: Math.round(mapX), y: Math.round(mapY) }
+      : undefined;
   const project = await getActiveProject(user.id);
-  return Response.json({ document: await createDocument(user.id, project.id, kind, title) });
+  return Response.json({ document: await createDocument(user.id, project.id, kind, title, place) });
 }

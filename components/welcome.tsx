@@ -165,7 +165,7 @@ export function WelcomeFeatures({ className = "" }: { className?: string }) {
           icon={ListChecks}
           title="Track progress like a task board"
           className="sm:col-span-2 lg:col-span-1 xl:col-span-2"
-          caption="Every page moves from To do to In progress, Ready to implement and Done. Statuses show in the sidebar, and quests marked Done turn green on the quest map, so you always know what's left to build."
+          caption="Every page moves from To do to In progress, Ready to implement and Done. Statuses show in the sidebar, and cards marked Done turn green on the todo map, so you always know what's left to build."
         >
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start lg:flex-col lg:items-stretch xl:flex-row xl:items-start">
             <ul className="min-w-0 flex-1 space-y-1">
@@ -241,8 +241,8 @@ export function WelcomeMap({ className = "" }: { className?: string }) {
         })}
       </div>
       <p className="mt-3 text-sm leading-relaxed text-ink-soft">
-        The quest map lays out quests and story chapters as cards you can arrange, linked wherever they mention each
-        other. Mark a quest Done once it&apos;s in your game.
+        The todo map lays out your whole game as cards you can arrange: quests, story, notes and quick tasks like
+        &ldquo;Settings menu&rdquo;, linked wherever they mention each other. Mark a card Done once it&apos;s in your game.
       </p>
     </section>
   );

@@ -42,7 +42,7 @@ export function HomeView({ greeting }: { greeting: string }) {
                 key={kind}
                 type="button"
                 onClick={() => void store.create(kind)}
-                className="group rounded-2xl border border-line bg-surface p-4 text-left transition-all hover:-translate-y-0.5 hover:border-accent hover:shadow-lg"
+                className="group rounded-2xl border border-line bg-surface p-4 text-left transition-all last:col-span-2 hover:-translate-y-0.5 hover:border-accent hover:shadow-lg sm:last:col-span-3"
               >
                 <span className="mb-3 grid size-9 place-items-center rounded-xl bg-accent-soft text-accent transition-transform group-hover:scale-105">
                   <Icon size={18} />

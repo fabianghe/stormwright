@@ -39,7 +39,7 @@ Delete `.data/` to reset the local database.
 - **Drizzle ORM** on Postgres: **Neon** over HTTP in production (`DATABASE_URL`), **PGlite** (embedded Postgres,
   WASM) locally when `DATABASE_URL` is empty. One schema and one set of migrations serve both. The neon-http driver
   has no transactions, so don't use `db.transaction`.
-- **@xyflow/react** (quest map), **@dnd-kit** (sidebar reordering), **lucide-react** icons (check names exist:
+- **@xyflow/react** (todo map), **@dnd-kit** (sidebar reordering), **lucide-react** icons (check names exist:
   some old names like `Trash2` and `History` are gone or moved in v1).
 - The React Compiler ESLint rules are on (`react-hooks/*`): no setState directly in effects, no ref reads during
   render, no mutating hook values. Fix the pattern instead of disabling the rule.
@@ -52,7 +52,7 @@ app/
   globals.css             palettes (light-dark() vars), UI primitives (.sw-btn, .sw-menu…), editor styles
   login/                  first run creates the account, later it's a sign-in form
   (app)/                  authenticated area: layout loads user + document list into AppShell
-    page.tsx              home   · d/[id]  document · map  quest map · trash · feedback (owner only)
+    page.tsx              home   · d/[id]  document · map  todo map · trash · feedback (owner only)
   api/                    route handlers: auth/*, documents (+ [id], restore, versions), vocab, search, feedback
 lib/
   model.ts                document kinds, statuses, ACTION_KINDS (labels, groups, link types), shared types
@@ -65,7 +65,7 @@ lib/
 components/
   app-shell, sidebar, command-palette, documents-store (client cache of summaries + create/update/reorder/trash),
   preferences (theme, sounds cookie, focus mode, sidebar), document-view (header, autosave, outline, export),
-  history-panel, quest-map, home-view, trash-view, auth-form, menu, icons
+  history-panel, todo-map, home-view, trash-view, auth-form, menu, icons
   editor/
     story-editor.tsx      builds the editor, sounds, mention clicks, typewriter scrolling, bubble menu
     combo.tsx             autocomplete input used inside node views
@@ -80,8 +80,8 @@ components/
   the content on every save (`extractMeta`), so the sidebar, map, search and autocomplete never parse documents on
   the client.
 - **Links** between documents come from mentions, dialogue `speakerId` and action `targetId`. Their type comes from
-  `ACTION_KINDS[kind].link` (starts / completes / fails / requires / mentions). The quest map draws them, and
-  backlinks use them.
+  `ACTION_KINDS[kind].link` (starts / completes / fails / requires / mentions). The todo map draws them (plus
+  hand-drawn arrows stored in `documents.map_links`), and backlinks use them.
 - **Vocab**: action targets without a linked document are stored per target label (e.g. every "GameObject" name),
   so Turn ON and Turn OFF share suggestions, as do Set flag and Only if flag.
 - **Node views and focus**: inputs inside node views are ignored by ProseMirror (Tiptap's `stopEvent`). To hand focus

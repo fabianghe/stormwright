@@ -21,6 +21,7 @@ const summaryColumns = {
   stats: schema.documents.stats,
   mapX: schema.documents.mapX,
   mapY: schema.documents.mapY,
+  mapLinks: schema.documents.mapLinks,
 };
 
 type SummaryRow = {
@@ -36,6 +37,7 @@ type SummaryRow = {
   stats: DocSummary["stats"];
   mapX: number | null;
   mapY: number | null;
+  mapLinks: string[];
 };
 
 function toSummary(row: SummaryRow): DocSummary {
@@ -108,7 +110,13 @@ export async function getDocument(userId: string, projectId: string, id: string)
   };
 }
 
-export async function createDocument(userId: string, projectId: string, kind: DocKind, title = ""): Promise<DocSummary> {
+export async function createDocument(
+  userId: string,
+  projectId: string,
+  kind: DocKind,
+  title = "",
+  place?: { x: number; y: number },
+): Promise<DocSummary> {
   const db = await getDb();
   const content = templateFor(kind);
   const meta = extractMeta(title, content);
@@ -130,6 +138,8 @@ export async function createDocument(userId: string, projectId: string, kind: Do
       vocab: meta.vocab,
       stats: meta.stats,
       searchText: meta.searchText,
+      mapX: place?.x ?? null,
+      mapY: place?.y ?? null,
     })
     .returning(summaryColumns);
   return toSummary(row);
@@ -145,6 +155,7 @@ export type DocumentPatch = {
   content?: unknown;
   mapX?: number | null;
   mapY?: number | null;
+  mapLinks?: string[];
   snapshotBefore?: boolean;
 };
 
@@ -166,6 +177,7 @@ export async function updateDocument(userId: string, projectId: string, id: stri
   if (patch.position !== undefined) values.position = patch.position;
   if (patch.mapX !== undefined) values.mapX = patch.mapX;
   if (patch.mapY !== undefined) values.mapY = patch.mapY;
+  if (patch.mapLinks !== undefined) values.mapLinks = patch.mapLinks;
 
   const textChanged = patch.content !== undefined || patch.title !== undefined;
   if (textChanged) {

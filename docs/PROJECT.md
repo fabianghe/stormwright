@@ -42,15 +42,16 @@ typewriter-style document.
 
 - **Accounts**: username + password, sessions in the database, lockout after 8 wrong attempts.
 - **Sign-in page** doubles as a short tour: what Gameweft is, live-styled examples of each feature (quest tabs,
-  dialogue, choices, mentions, status tracking, actions), a mini quest map, and the palette and sound switch, so
+  dialogue, choices, mentions, status tracking, actions), a mini todo map, and the palette and sound switch, so
   visitors can pick a look before signing in. The examples use an original story
   (Wren and Tomas) on purpose: don't put VIRTUOUS content on this public page.
-- **Sidebar** (Claude-style): New menu, search (⌘K), Home, Quest map, Pinned, sections per kind (Quests, Story,
-  Characters, Places, Items, Notes) with drag-to-reorder, Trash, settings (palette, mode, sign out).
+- **Sidebar** (Claude-style): New menu, search (⌘K), Home, Todo map, Pinned, sections per kind (Quests, Story,
+  Characters, Places, Items, Notes, Tasks) with drag-to-reorder, Trash, settings (palette, mode, sign out).
 - **Game projects**: each account can create, rename (pencil in the project menu) and switch between separate games; existing documents stay in the
   original project.
-- **Document kinds** with starter templates: quest (including an Active short description), story, character, place, item, note. Status per document:
-  To do → In progress → Ready to implement → Done. On the quest map, Done means implemented in the game.
+- **Document kinds** with starter templates: quest (including an Active short description), story, character, place, item, note,
+  task (game work that isn't story, like a settings menu). Status per document:
+  To do → In progress → Ready to implement → Done. On the todo map, Done means implemented in the game.
 - **Character colours**: each character can pick one of eight named colours (Rose, Ember, Gold, Moss, Teal, Sky,
   Iris, Plum), or none. Each colour has a light and a dark shade, blended toward the palette's ink, so it fits every
   theme. It tints their dialogue (speaker, quote mark, line bar), @mentions, their icon in lists and suggestions, and
@@ -71,8 +72,11 @@ typewriter-style document.
     kept up to date when something is renamed, and each document shows "Mentioned in" backlinks.
 - **Autosave** (debounced, retries when offline), **version history** (snapshot at most every 10 minutes, 60 kept,
   restore keeps a snapshot of the current text first), **Trash** with restore.
-- **Quest map**: quests and story documents as cards, arrows from Start/Complete/Fail/Only-if-quest actions;
-  drag to arrange (positions saved), "Tidy up" to auto-layout.
+- **Todo map** (renamed from Quest map): a bird's-eye view of the whole game. Every kind of page is a card, with
+  filter chips per kind (remembered in a cookie). Arrows come from Start/Complete/Fail/Only-if-quest actions and
+  mentions, and you can draw your own by dragging from a card's dot to another card (click an arrow to remove it).
+  Double-click the map (or "Add task") to drop quick sticky-note Task cards; Enter adds another below. Drag to
+  arrange (positions saved), "Tidy up" to auto-layout.
 - **Focus mode** (⌘⇧F): hides the chrome, dims everything but the current paragraph, keeps the caret centred.
 - **Typewriter sounds** (on by default, synthesised with WebAudio: key clacks and a carriage-return bell). Switch them
   off in the settings menu (next to the palettes), in the document header, or on the sign-in page.

@@ -83,7 +83,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
           void store.create(kind, query.trim());
         },
       })),
-      { id: "map", title: "Open the quest map", icon: <Network size={15} />, group: "Go", run: go("/map") },
+      { id: "map", title: "Open the todo map", icon: <Network size={15} />, group: "Go", run: go("/map") },
       {
         id: "mode",
         title: dark ? "Switch to light mode" : "Switch to dark mode",

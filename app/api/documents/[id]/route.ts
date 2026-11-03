@@ -15,6 +15,12 @@ export async function GET(_request: Request, { params }: Context) {
   return doc ? Response.json({ document: doc }) : fail("Not found", 404);
 }
 
+function idList(value: unknown, self: string) {
+  if (!Array.isArray(value)) return undefined;
+  const ids = value.filter((id): id is string => typeof id === "string" && id.length <= 64 && id !== self);
+  return [...new Set(ids)].slice(0, 200);
+}
+
 function finiteOrNull(value: unknown) {
   return value === null ? null : typeof value === "number" && Number.isFinite(value) ? value : undefined;
 }
@@ -25,6 +31,7 @@ export async function PATCH(request: Request, { params }: Context) {
   const user = await requireUser();
   if (user instanceof Response) return user;
   const project = await getActiveProject(user.id);
+  const id = (await params).id;
 
   const patch: DocumentPatch = {};
   if (typeof body.title === "string") patch.title = body.title.slice(0, 300);
@@ -35,6 +42,7 @@ export async function PATCH(request: Request, { params }: Context) {
   if (typeof body.position === "number" && Number.isFinite(body.position)) patch.position = body.position;
   if ("mapX" in body) patch.mapX = finiteOrNull(body.mapX);
   if ("mapY" in body) patch.mapY = finiteOrNull(body.mapY);
+  if ("mapLinks" in body) patch.mapLinks = idList(body.mapLinks, id);
   if (body.snapshotBefore === true) patch.snapshotBefore = true;
   if ("content" in body) {
     const content = body.content as { type?: unknown } | null;
@@ -43,7 +51,7 @@ export async function PATCH(request: Request, { params }: Context) {
     patch.content = content;
   }
 
-  const doc = await updateDocument(user.id, project.id, (await params).id, patch);
+  const doc = await updateDocument(user.id, project.id, id, patch);
   return doc ? Response.json({ document: doc }) : fail("Not found", 404);
 }
 

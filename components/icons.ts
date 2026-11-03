@@ -21,6 +21,7 @@ import {
   Radio,
   Scroll,
   Sparkles,
+  SquareCheckBig,
   StickyNote,
   UserRound,
   Volume2,
@@ -37,6 +38,7 @@ export const KIND_ICONS: Record<DocKind, LucideIcon> = {
   place: MapPin,
   item: Gem,
   note: StickyNote,
+  task: SquareCheckBig,
 };
 
 export const ACTION_ICONS: Record<ActionKind, LucideIcon> = {

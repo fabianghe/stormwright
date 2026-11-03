@@ -1,0 +1,1 @@
+ALTER TABLE "documents" ADD COLUMN "map_links" jsonb DEFAULT '[]'::jsonb NOT NULL;

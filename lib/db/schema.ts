@@ -61,6 +61,7 @@ export const documents = pgTable(
     searchText: text("search_text").default("").notNull(),
     mapX: real("map_x"),
     mapY: real("map_y"),
+    mapLinks: jsonb("map_links").$type<string[]>().default([]).notNull(),
     createdAt: createdAt(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),

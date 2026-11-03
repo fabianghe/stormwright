@@ -531,7 +531,7 @@ export function Sidebar({
 
       <nav className="min-h-0 flex-1 overflow-y-auto px-3 pb-4 pt-3">
         {navLink("/", "Home", House)}
-        {navLink("/map", "Quest map", Network)}
+        {navLink("/map", "Todo map", Network)}
 
         <Section title="Pinned" docs={pinned} activeId={activeId} onNavigate={onNavigate} />
         {DOC_KINDS.map((kind: DocKind) => (

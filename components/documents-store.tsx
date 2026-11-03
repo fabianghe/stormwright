@@ -10,8 +10,11 @@ type Store = {
   docsById: Map<string, DocSummary>;
   upsert: (doc: DocSummary) => void;
   remove: (id: string) => void;
-  create: (kind: DocKind, title?: string, open?: boolean) => Promise<DocSummary | null>;
-  update: (id: string, patch: Partial<Pick<DocSummary, "title" | "pinned" | "position" | "status" | "color" | "kind" | "mapX" | "mapY">>) => Promise<void>;
+  create: (kind: DocKind, title?: string, open?: boolean, place?: { x: number; y: number }) => Promise<DocSummary | null>;
+  update: (
+    id: string,
+    patch: Partial<Pick<DocSummary, "title" | "pinned" | "position" | "status" | "color" | "kind" | "mapX" | "mapY" | "mapLinks">>,
+  ) => Promise<void>;
   trash: (id: string) => Promise<void>;
   reorder: (orderedIds: string[], movedId: string) => void;
 };
@@ -33,9 +36,11 @@ export function DocumentsProvider({ initial, children }: { initial: DocSummary[]
   const remove = useCallback((id: string) => setDocs((list) => list.filter((d) => d.id !== id)), []);
 
   const create = useCallback(
-    async (kind: DocKind, title = "", open = true) => {
+    async (kind: DocKind, title = "", open = true, place?: { x: number; y: number }) => {
       try {
-        const { document } = await api<{ document: DocSummary }>("/api/documents", { body: { kind, title } });
+        const { document } = await api<{ document: DocSummary }>("/api/documents", {
+          body: { kind, title, mapX: place?.x, mapY: place?.y },
+        });
         upsert(document);
         if (open) router.push(`/d/${document.id}`);
         return document;
