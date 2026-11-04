@@ -6,7 +6,7 @@ import { playKey, playReturn } from "@/lib/typewriter-sound";
 import { usePreferences } from "@/components/preferences";
 import { InspireButton, useInspiration } from "@/components/inspiration";
 
-function TypedHeading({ text, delay, className = "" }: { text: string; delay: number; className?: string }) {
+function TypedHeading({ text, delay }: { text: string; delay: number }) {
   const [shown, setShown] = useState(0);
 
   useEffect(() => {
@@ -23,7 +23,7 @@ function TypedHeading({ text, delay, className = "" }: { text: string; delay: nu
   }, [text, delay]);
 
   return (
-    <h2 className={`relative font-display text-2xl leading-snug ${className}`} aria-label={text}>
+    <h2 className="relative font-display text-2xl leading-snug" aria-label={text}>
       <span aria-hidden className="invisible">{text}▍</span>
       <span aria-hidden className="absolute inset-0">
         <span className={shown < text.length ? "sw-caret" : undefined}>{text.slice(0, shown)}</span>
@@ -64,13 +64,12 @@ export function AuthForm({ firstRun, canSignUp, greeting }: { firstRun: boolean;
   return (
     <div className="w-full">
       <form onSubmit={submit} onKeyDown={typewriter} className="sw-page sw-login-card space-y-4 rounded-2xl px-7 py-8">
+        {mode === "login" && <InspireButton onClick={inspiration.inspire} />}
         <TypedHeading
           key={`${mode}-${inspiration.rolls}`}
           text={mode === "signup" ? "Create your account" : inspiration.greeting}
           delay={inspiration.rolls ? 0 : 550}
-          className={mode === "login" ? "min-h-[2lh]" : ""}
         />
-        {mode === "login" && <InspireButton onClick={inspiration.inspire} />}
         {firstRun && (
           <p className="rounded-lg bg-accent-soft px-3 py-2 text-sm leading-relaxed text-ink-soft">
             Welcome. This is a fresh install: create the first account, it&apos;s yours.
