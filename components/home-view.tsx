@@ -6,6 +6,7 @@ import { timeAgo } from "@/lib/time";
 import { KIND_ICONS } from "@/components/icons";
 import { StatusDot } from "@/components/status-dot";
 import { useDocuments } from "@/components/documents-store";
+import { InspireButton, useInspiration } from "@/components/inspiration";
 
 const TIPS = [
   ["/", "opens the block menu: dialogue, choices, stages, notes and game actions."],
@@ -16,8 +17,9 @@ const TIPS = [
   ["⌘⇧F", "is focus mode. Esc brings everything back."],
 ];
 
-export function HomeView({ greeting }: { greeting: string }) {
+export function HomeView({ greeting, name }: { greeting: string; name: string }) {
   const store = useDocuments();
+  const inspiration = useInspiration(greeting, name);
 
   const recent = [...store.docs].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 6);
   const totals = store.docs.reduce(
@@ -29,9 +31,12 @@ export function HomeView({ greeting }: { greeting: string }) {
   return (
     <div className="h-full overflow-y-auto">
       <div className="mx-auto max-w-5xl px-6 pb-24 pt-16 sm:px-10">
-        <h1 className="sw-fade-in font-display text-4xl sm:text-5xl">
-          <span className="sw-caret">{greeting}</span>
-        </h1>
+        <div className="flex flex-col items-start gap-4 sm:flex-row sm:justify-between">
+          <h1 key={inspiration.rolls} className="sw-fade-in font-display text-4xl sm:text-5xl">
+            <span className="sw-caret">{inspiration.greeting}</span>
+          </h1>
+          <InspireButton onClick={inspiration.inspire} />
+        </div>
         <p className="sw-fade-in mt-3 text-ink-soft [animation-delay:120ms]">What happens next in your story?</p>
 
         <section className="sw-fade-in mt-10 grid grid-cols-2 gap-3 [animation-delay:200ms] sm:grid-cols-3">

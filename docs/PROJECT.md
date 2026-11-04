@@ -85,7 +85,7 @@ typewriter-style document.
 - **Beta feedback**: a "Beta" tag by the logo and a "Send feedback" button in the sidebar (Idea / Problem / Other +
   message, saved in the database with the page it was sent from). The owner (the first account created) gets a
   "Feedback inbox" page to read them, mark them done or delete them; other accounts can't see it.
-- Home page with greeting, quick-create cards, recent documents, totals and keyboard tips.
+- Home page with greeting (an "Inspire me" button, also on the sign-in form, deals a new line of writing advice), quick-create cards, recent documents, totals and keyboard tips.
 
 ## Ideas for later (not built)
 - **Unity importer**: read the AI-ready JSON and create/update VIRTUOUS assets. Mapping to the game's systems:

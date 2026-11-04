@@ -3,24 +3,145 @@ export const GREETINGS = [
   "The page is yours, {name}.",
   "Pull up a chair, {name}.",
   "Fancy a cup of tea, {name}?",
-  "Every hero needs a reason, {name}.",
-  "What does the villain want, {name}?",
-  "Every map hides a door, {name}.",
   "The world is holding its breath, {name}.",
   "Thunder in the distance, {name}.",
   "Rain on the window, {name}.",
   "The lanterns are lit, {name}.",
   "Something stirs in the dark, {name}.",
   "The wind changed, {name}.",
-  "Time to break a heart, {name}.",
   "The NPCs are waiting for lines, {name}.",
-  "Plot twist incoming, {name}.",
   "Your NPCs have opinions, {name}.",
   "The chicken knows something, {name}.",
   "Achievement unlocked: showing up, {name}.",
 ];
 
-export function randomGreeting(name?: string) {
-  const greeting = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
+export const INSPIRATIONS = [
+  "Every hero needs a reason, {name}.",
+  "What does the villain want, {name}?",
+  "Every map hides a door, {name}.",
+  "Time to break a heart, {name}.",
+  "Plot twist incoming, {name}.",
+  "Give them something to want, {name}.",
+  "Let them want a glass of water, {name}.",
+  "Be cruel to someone sweet, {name}.",
+  "Start as close to the end as you dare, {name}.",
+  "Give us someone to root for, {name}.",
+  "Every line must earn its place, {name}.",
+  "Write to please one person, {name}.",
+  "Take them far from comfort, {name}.",
+  "Why must you tell this story, {name}?",
+  "We admire the try, not the win, {name}.",
+  "Coincidence can't rescue them, {name}.",
+  "Know your ending first, {name}.",
+  "Throw away your first idea, {name}.",
+  "Finish it, then fix it, {name}.",
+  "Passive heroes bore everyone, {name}.",
+  "Stuck? List what won't happen, {name}.",
+  "Stack the odds against them, {name}.",
+  "What belief burns in you, {name}?",
+  "Pull apart a story you love, {name}.",
+  "Swap 'and then' for 'but', {name}.",
+  "Hide a clue in plain sight, {name}.",
+  "Rock bottom is a foundation, {name}.",
+  "Track every thread on one grid, {name}.",
+  "Take away their mentor, {name}.",
+  "Plant it now, pay it off later, {name}.",
+  "Give a small object a huge future, {name}.",
+  "Kill your darlings, {name}.",
+  "Cut ten percent, {name}.",
+  "Beware the adverb, {name}.",
+  "Write with the door closed, {name}.",
+  "Rewrite with the door open, {name}.",
+  "Start with 'what if', {name}.",
+  "Leave out the parts people skip, {name}.",
+  "Write one true sentence, {name}.",
+  "Stop while you know what's next, {name}.",
+  "Keep most of the iceberg hidden, {name}.",
+  "Write hard about what hurts, {name}.",
+  "If a gun is shown, it must fire, {name}.",
+  "Show the glint on broken glass, {name}.",
+  "Show the bomb under the table, {name}.",
+  "Cut the dull bits, {name}.",
+  "Third-act trouble starts in act one, {name}.",
+  "Let them add two and two, {name}.",
+  "Grab them by the throat, {name}.",
+  "Pressure reveals character, {name}.",
+  "Every scene must turn, {name}.",
+  "Surprising, yet inevitable, {name}.",
+  "Reversal, then recognition, {name}.",
+  "Find what they want, then follow, {name}.",
+  "Jump off the cliff, build wings, {name}.",
+  "List what you love and hate, {name}.",
+  "The first draft is just for you, {name}.",
+  "Read it out loud, {name}.",
+  "Write the book you want to read, {name}.",
+  "Intention meets obstacle, {name}.",
+  "Limits beat powers, {name}.",
+  "Make the magic cost something, {name}.",
+  "Go deeper before you go wider, {name}.",
+  "Hint at a history untold, {name}.",
+  "Name the mountains far away, {name}.",
+  "Nobody is safe, {name}.",
+  "Let the honourable one pay, {name}.",
+  "Set a heart against itself, {name}.",
+  "Let them refuse the call, {name}.",
+  "Send them into the cave, {name}.",
+  "Let the villain be right, {name}.",
+  "Let your hero save a cat, {name}.",
+  "What ghost haunts them, {name}?",
+  "What lie do they believe, {name}?",
+  "Give them a flaw that costs, {name}.",
+  "Let them say the wrong thing, {name}.",
+  "Nobody says what they mean, {name}.",
+  "Arrive late, leave early, {name}.",
+  "What is left unsaid here, {name}?",
+  "Who wants what from whom, {name}?",
+  "Bird by bird, {name}.",
+  "Allow a terrible first draft, {name}.",
+  "Use the short word, {name}.",
+  "Omit needless words, {name}.",
+  "Don't say it's scary. Scare us, {name}.",
+  "Everyone has a motive, {name}.",
+  "Send someone through the door, {name}.",
+  "A stranger comes to town, {name}.",
+  "Make them laugh, cry and wait, {name}.",
+  "Chase them up a tree, throw rocks, {name}.",
+  "Let the player do it, {name}.",
+  "Make both choices hurt, {name}.",
+  "Let the room tell the story, {name}.",
+  "Let the world remember, {name}.",
+  "Reward the curious, {name}.",
+  "Every choice needs an echo, {name}.",
+  "Make the fetch quest personal, {name}.",
+  "Hide a story in an item, {name}.",
+  "Give the shopkeeper a secret, {name}.",
+  "Give the side quest a heart, {name}.",
+  "Betray someone, {name}.",
+  "Burn a bridge, {name}.",
+  "Let love cost them, {name}.",
+  "Take what they need most, {name}.",
+  "Give the villain a tender moment, {name}.",
+];
+
+const ALL_GREETINGS = [...GREETINGS, ...INSPIRATIONS];
+
+let deck: string[] = [];
+
+function personalize(greeting: string, name?: string) {
   return name ? greeting.replace("{name}", name) : greeting.replace(/,? \{name\}/, "");
+}
+
+export function randomGreeting(name?: string) {
+  return personalize(ALL_GREETINGS[Math.floor(Math.random() * ALL_GREETINGS.length)], name);
+}
+
+export function nextInspiration(name?: string) {
+  if (deck.length === 0) {
+    deck = [...INSPIRATIONS];
+    for (let i = deck.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+  }
+  return personalize(deck.pop()!, name);
 }

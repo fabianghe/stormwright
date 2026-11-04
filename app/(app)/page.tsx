@@ -6,5 +6,5 @@ import { HomeView } from "@/components/home-view";
 export default async function HomePage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
-  return <HomeView greeting={randomGreeting(user.username)} />;
+  return <HomeView greeting={randomGreeting(user.username)} name={user.username} />;
 }
