@@ -17,9 +17,9 @@ const TIPS = [
   ["⌘⇧F", "is focus mode. Esc brings everything back."],
 ];
 
-export function HomeView({ greeting, name }: { greeting: string; name: string }) {
+export function HomeView({ greeting }: { greeting: string }) {
   const store = useDocuments();
-  const inspiration = useInspiration(greeting, name);
+  const inspiration = useInspiration(greeting);
 
   const recent = [...store.docs].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 6);
   const totals = store.docs.reduce(
